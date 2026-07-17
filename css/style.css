@@ -1,0 +1,503 @@
+/* ==========================================================
+   AEPUNS WEBSITE
+   Main Stylesheet
+========================================================== */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html,
+body{
+
+    width:100%;
+    height:100%;
+
+}
+
+body{
+
+    background-color:#ffffff;
+
+    overflow:hidden;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    font-family:Arial, Helvetica, sans-serif;
+
+    user-select:none;
+
+}
+
+body.is-fading{
+
+    background-color:#ffffff;
+
+}
+
+@keyframes roll-background{
+
+    from{
+
+        background-position:0 0;
+
+    }
+
+    to{
+
+        background-position:700px 700px;
+
+    }
+
+}
+
+@media (prefers-reduced-motion:reduce){
+
+    #website::before{
+
+        animation:none;
+
+    }
+
+}
+
+/* ==========================================================
+                    WEBSITE
+========================================================== */
+
+#website{
+
+    position:relative;
+
+    width:100%;
+    height:100%;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    isolation:isolate;
+
+}
+
+#website::before{
+
+    content:"";
+
+    position:absolute;
+    inset:0;
+
+    background-color:#ffffff;
+    background-image:url("../images/ampersandbg.png");
+    background-repeat:repeat;
+    background-size:700px auto;
+
+    transform-origin:top left;
+
+    transition:transform 1.35s cubic-bezier(.77,0,.175,1);
+
+    animation:roll-background 45s linear infinite;
+
+    z-index:0;
+
+}
+
+@media (prefers-color-scheme:dark){
+
+    #website::before{
+
+        background-color:#000000;
+        background-image:url("../images/ampersandbg-dark.png");
+
+    }
+
+}
+
+body.is-zooming #website::before{
+
+    transform:translate(var(--background-camera-x),var(--background-camera-y)) scale(20);
+
+}
+
+body.is-fading #website::before{
+
+    animation:none;
+    opacity:0;
+
+}
+
+/* ==========================================================
+                    STAGE
+========================================================== */
+
+#stage{
+
+    position:relative;
+
+    transform-origin:top left;
+
+    z-index:1;
+
+    width:min(900px,95vw);
+
+    aspect-ratio:9/7;
+
+    transition:
+        transform 1.35s cubic-bezier(.77,0,.175,1),
+        opacity .4s linear;
+
+}
+
+#stage.is-zooming{
+
+    transform:translate(var(--camera-x),var(--camera-y)) scale(20);
+
+}
+
+#stage.is-fading{
+
+    opacity:0;
+
+}
+
+/* ==========================================================
+                    SHARED IMAGES
+========================================================== */
+
+#character,
+#logo,
+.bubble,
+.point{
+
+    position:absolute;
+
+    user-select:none;
+
+    -webkit-user-drag:none;
+
+}
+
+/* ==========================================================
+                    CHARACTER
+========================================================== */
+
+#character{
+
+    width:23%;
+
+    left:50%;
+    top:54%;
+
+    transform:translate(-50%,-50%);
+
+    z-index:50;
+
+}
+
+/* ==========================================================
+                        LOGO
+========================================================== */
+
+#logo{
+
+    width:20%;
+
+    left:50%;
+    top:calc(52% + 10px);
+
+    transform:translateX(-50%);
+
+    z-index:40;
+
+}
+
+/* ==========================================================
+                    ALL BUBBLES
+========================================================== */
+
+.bubble{
+
+    position:absolute;
+
+    width:23%;
+
+    cursor:pointer;
+
+    z-index:20;
+
+    transition:
+        transform .35s ease,
+        filter .35s ease,
+        opacity .35s ease;
+
+}
+
+.bubble.hover{
+
+    transform:
+        translateY(-4px)
+        scale(1.015);
+
+    filter:
+        drop-shadow(
+            0 10px 12px
+            rgba(0,0,0,.15)
+        );
+
+}
+
+.bubble.rocking{
+
+    animation:
+        rock
+        1.8s
+        ease-in-out
+        infinite;
+
+}
+
+/* ==========================================================
+                INDIVIDUAL POSITIONS
+========================================================== */
+
+/* ABOUT */
+
+#about{
+
+    left:49%;
+    top:20%;
+
+    transform:translateX(-50%);
+
+}
+
+/* MUSIC */
+
+#music{
+
+    left:23%;
+    top:28%;
+
+}
+
+/* WIP */
+
+#wip{
+
+    right:22%;
+    top:29%;
+
+}
+
+/* UPDATES */
+
+#updates{
+
+    left:calc(18% - 2px);
+    bottom:calc(25% + 7px);
+
+}
+
+/* SOCIALS */
+
+#socials{
+
+    right:calc(18% - 6px);
+    bottom:24%;
+
+}
+
+/* ==========================================================
+                    ROCK ANIMATION
+========================================================== */
+
+@keyframes rock{
+
+    0%{
+
+        transform:
+            translateY(-4px)
+            scale(1.015)
+            rotate(0deg);
+
+    }
+
+    20%{
+
+        transform:
+            translateY(-4px)
+            scale(1.015)
+            rotate(-0.8deg);
+
+    }
+
+    45%{
+
+        transform:
+            translateY(-4px)
+            scale(1.015)
+            rotate(1.3deg);
+
+    }
+
+    70%{
+
+        transform:
+            translateY(-4px)
+            scale(1.015)
+            rotate(-0.5deg);
+
+    }
+
+    100%{
+
+        transform:
+            translateY(-4px)
+            scale(1.015)
+            rotate(0.8deg);
+
+    }
+
+}
+
+.bubble-blank{
+
+    z-index:21;
+
+    opacity:0;
+
+    pointer-events:none;
+
+    transition:opacity .75s linear;
+
+}
+
+.bubble-blank.is-visible{
+
+    opacity:1;
+
+}
+
+/* ==========================================================
+                    BUBBLE POINTS
+========================================================== */
+
+.point{
+
+    width:5.4%;
+
+    transform:translate(-50%,-50%);
+
+    opacity:0;
+
+    pointer-events:none;
+
+    z-index:30;
+
+}
+
+#point-about{
+
+    left:calc(49% + 3px);
+    top:calc(29% + 3px);
+
+}
+
+#point-music{
+
+    left:calc(32.5% - 2px);
+    top:calc(39% + 1px);
+
+}
+
+#point-wip{
+
+    left:calc(67.5% - 3px);
+    top:40%;
+
+}
+
+#point-updates{
+
+    left:calc(26.5% - 2px);
+    top:calc(61% - 7px);
+
+}
+
+#point-socials{
+
+    left:73.5%;
+    top:62%;
+
+}
+
+@keyframes rock-about{
+
+    0%{
+
+        transform:
+            translateX(-50%)
+            translateY(-4px)
+            scale(1.015)
+            rotate(0deg);
+
+    }
+
+    20%{
+
+        transform:
+            translateX(-50%)
+            translateY(-4px)
+            scale(1.015)
+            rotate(-0.8deg);
+
+    }
+
+    45%{
+
+        transform:
+            translateX(-50%)
+            translateY(-4px)
+            scale(1.015)
+            rotate(1.3deg);
+
+    }
+
+    70%{
+
+        transform:
+            translateX(-50%)
+            translateY(-4px)
+            scale(1.015)
+            rotate(-0.5deg);
+
+    }
+
+    100%{
+
+        transform:
+            translateX(-50%)
+            translateY(-4px)
+            scale(1.015)
+            rotate(0.8deg);
+
+    }
+
+}
+
+/* ==========================================================
+                    RESPONSIVE
+========================================================== */
+
+#about.hover{
+
+    transform:
+        translateX(-50%)
+        translateY(-4px)
+        scale(1.015);
+
+}
