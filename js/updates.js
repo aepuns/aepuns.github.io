@@ -9,6 +9,7 @@ const adminStatus = document.querySelector("#admin-status");
 const loginStatus = document.querySelector("#login-status");
 const adminEmail = document.querySelector("#admin-email");
 const updateTitle = document.querySelector("#update-title");
+const adminUserId = "8951dc95-5cbf-4800-941a-679902d34849";
 const secretSequence = [
     "a",
     "p",
@@ -35,17 +36,19 @@ const setLoginStatus = (message, state = "") => {
 };
 
 const setAdminView = (session) => {
-    loginForm.hidden = Boolean(session);
-    updateForm.hidden = !session;
+    const isAdmin = session?.user.id === adminUserId;
+
+    loginForm.hidden = isAdmin;
+    updateForm.hidden = !isAdmin;
     setAdminStatus("");
-    setLoginStatus(session ? "sign-in confirmed." : "", session ? "success" : "");
+    setLoginStatus(isAdmin ? "sign-in confirmed." : "", isAdmin ? "success" : "");
 
     if (adminDialog.open) {
-        (session ? updateTitle : adminEmail).focus();
+        (isAdmin ? updateTitle : adminEmail).focus();
     }
 };
 
-const renderUpdates = (updates) => {
+const renderUpdates = (updates, likes, currentUserId) => {
     updatesFeed.replaceChildren();
 
     if (!updates.length) {
@@ -60,7 +63,13 @@ const renderUpdates = (updates) => {
         const title = document.createElement("h2");
         const date = document.createElement("time");
         const body = document.createElement("p");
+        const likeButton = document.createElement("button");
+        const heart = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        const heartPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        const likeCount = document.createElement("span");
         const publishedAt = new Date(update.published_at);
+        const updateLikes = likes.filter((like) => like.update_id === update.id);
+        const isLiked = updateLikes.some((like) => like.user_id === currentUserId);
 
         entry.className = "update-entry";
         title.textContent = update.title;
@@ -71,25 +80,95 @@ const renderUpdates = (updates) => {
             day: "numeric"
         });
         body.textContent = update.body;
-        entry.append(date, title, body);
+        likeButton.className = "like-button";
+        likeButton.type = "button";
+        likeButton.setAttribute("aria-label", `${isLiked ? "Unlike" : "Like"} ${update.title}`);
+        likeButton.setAttribute("aria-pressed", String(isLiked));
+        heart.setAttribute("class", "like-heart");
+        heart.setAttribute("viewBox", "0 0 24 24");
+        heart.setAttribute("aria-hidden", "true");
+        heartPath.setAttribute("d", "M12 21C10.4 19.6 4.4 15.5 2.7 11.4C1.1 7.6 3.1 3.7 6.8 3.2C9 2.9 11 4 12 5.7C13 4 15 2.9 17.2 3.2C20.9 3.7 22.9 7.6 21.3 11.4C19.6 15.5 13.6 19.6 12 21Z");
+        heart.append(heartPath);
+        likeCount.textContent = String(updateLikes.length);
+        likeButton.append(heart, likeCount);
+        likeButton.addEventListener("click", () => toggleLike(update.id, isLiked, likeButton));
+        entry.append(date, title, body, likeButton);
         updatesFeed.append(entry);
     });
 };
 
 const loadUpdates = async () => {
-    const { data, error } = await client
-        .from("updates")
-        .select("id,title,body,published_at")
-        .order("published_at", { ascending: false });
+    const [updatesResult, likesResult, sessionResult] = await Promise.all([
+        client
+            .from("updates")
+            .select("id,title,body,published_at")
+            .order("published_at", { ascending: false }),
+        client
+            .from("update_likes")
+            .select("update_id,user_id"),
+        client.auth.getSession()
+    ]);
 
-    if (error) {
+    if (updatesResult.error) {
         updatesStatus.textContent = "Updates are unavailable right now.";
-        console.error(error);
+        console.error(updatesResult.error);
         return;
     }
 
-    renderUpdates(data);
+    if (likesResult.error) {
+        console.error(likesResult.error);
+    }
+
+    renderUpdates(
+        updatesResult.data,
+        likesResult.data || [],
+        sessionResult.data.session?.user.id
+    );
 };
+
+const getLikeUser = async () => {
+    const { data: sessionData } = await client.auth.getSession();
+
+    if (sessionData.session) {
+        return sessionData.session.user;
+    }
+
+    const { data, error } = await client.auth.signInAnonymously();
+
+    if (error) {
+        throw error;
+    }
+
+    return data.user;
+};
+
+async function toggleLike(updateId, isLiked, button) {
+    button.disabled = true;
+
+    try {
+        const user = await getLikeUser();
+        const query = isLiked
+            ? client
+                .from("update_likes")
+                .delete()
+                .eq("update_id", updateId)
+                .eq("user_id", user.id)
+            : client
+                .from("update_likes")
+                .insert({ update_id: updateId });
+        const { error } = await query;
+
+        if (error) {
+            throw error;
+        }
+
+        await loadUpdates();
+    } catch (error) {
+        button.disabled = false;
+        updatesStatus.textContent = "couldn't update that heart. try again.";
+        console.error(error);
+    }
+}
 
 document.addEventListener("keydown", async (event) => {
     if (event.target.matches("input, textarea")) {
@@ -110,7 +189,7 @@ document.addEventListener("keydown", async (event) => {
         const { data } = await client.auth.getSession();
         setAdminView(data.session);
         adminDialog.showModal();
-        (data.session ? updateTitle : adminEmail).focus();
+        (data.session?.user.id === adminUserId ? updateTitle : adminEmail).focus();
     }
 });
 
@@ -129,6 +208,13 @@ loginForm.addEventListener("submit", async (event) => {
     });
 
     if (error) {
+        setLoginStatus("sign-in incorrect. you're not aepuns >:(", "error");
+        return;
+    }
+
+    if (data.session?.user.id !== adminUserId) {
+        await client.auth.signOut();
+        setAdminView(null);
         setLoginStatus("sign-in incorrect. you're not aepuns >:(", "error");
         return;
     }
