@@ -63,6 +63,7 @@ const renderUpdates = (updates, likes, currentUserId) => {
         const title = document.createElement("h2");
         const date = document.createElement("time");
         const body = document.createElement("p");
+        const actions = document.createElement("div");
         const likeButton = document.createElement("button");
         const heart = document.createElementNS("http://www.w3.org/2000/svg", "svg");
         const heartPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
@@ -70,8 +71,10 @@ const renderUpdates = (updates, likes, currentUserId) => {
         const publishedAt = new Date(update.published_at);
         const updateLikes = likes.filter((like) => like.update_id === update.id);
         const isLiked = updateLikes.some((like) => like.user_id === currentUserId);
+        const isAdmin = currentUserId === adminUserId;
 
         entry.className = "update-entry";
+        actions.className = "update-actions";
         title.textContent = update.title;
         date.dateTime = publishedAt.toISOString();
         date.textContent = publishedAt.toLocaleDateString(undefined, {
@@ -92,7 +95,20 @@ const renderUpdates = (updates, likes, currentUserId) => {
         likeCount.textContent = String(updateLikes.length);
         likeButton.append(heart, likeCount);
         likeButton.addEventListener("click", () => toggleLike(update.id, isLiked, likeButton));
-        entry.append(date, title, body, likeButton);
+        actions.append(likeButton);
+
+        if (isAdmin) {
+            const deleteButton = document.createElement("button");
+
+            deleteButton.className = "delete-button";
+            deleteButton.type = "button";
+            deleteButton.textContent = "delete";
+            deleteButton.setAttribute("aria-label", `Delete ${update.title}`);
+            deleteButton.addEventListener("click", () => deleteUpdate(update, deleteButton));
+            actions.append(deleteButton);
+        }
+
+        entry.append(date, title, body, actions);
         updatesFeed.append(entry);
     });
 };
@@ -136,6 +152,10 @@ const getLikeUser = async () => {
     const { data, error } = await client.auth.signInAnonymously();
 
     if (error) {
+        if (/anonymous sign-?ins? (are|is) disabled/i.test(error.message)) {
+            throw new Error("LIKES_REQUIRE_ANONYMOUS_AUTH", { cause: error });
+        }
+
         throw error;
     }
 
@@ -165,9 +185,35 @@ async function toggleLike(updateId, isLiked, button) {
         await loadUpdates();
     } catch (error) {
         button.disabled = false;
-        updatesStatus.textContent = "couldn't update that heart. try again.";
+        updatesStatus.textContent = error.message === "LIKES_REQUIRE_ANONYMOUS_AUTH"
+            ? "likes need anonymous sign-ins enabled in Supabase."
+            : "couldn't update that heart. try again.";
         console.error(error);
     }
+}
+
+async function deleteUpdate(update, button) {
+    if (!window.confirm(`Delete "${update.title}"? This can't be undone.`)) {
+        return;
+    }
+
+    button.disabled = true;
+    updatesStatus.textContent = "deleting update...";
+
+    const { error } = await client
+        .from("updates")
+        .delete()
+        .eq("id", update.id);
+
+    if (error) {
+        button.disabled = false;
+        updatesStatus.textContent = "couldn't delete that update. check the database setup.";
+        console.error(error);
+        return;
+    }
+
+    updatesStatus.textContent = "update deleted.";
+    await loadUpdates();
 }
 
 document.addEventListener("keydown", async (event) => {
@@ -221,6 +267,7 @@ loginForm.addEventListener("submit", async (event) => {
 
     loginForm.reset();
     setAdminView(data.session);
+    await loadUpdates();
 });
 
 updateForm.addEventListener("submit", async (event) => {
@@ -247,6 +294,7 @@ updateForm.addEventListener("submit", async (event) => {
 adminSignOut.addEventListener("click", async () => {
     await client.auth.signOut();
     setAdminView(null);
+    await loadUpdates();
 });
 
 loadUpdates();
