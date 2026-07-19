@@ -66,16 +66,15 @@ document.querySelectorAll("[data-release-date]").forEach((release) => {
 
 document.querySelectorAll(".track").forEach((track) => {
 
-    const lyrics = document.createElement("details");
-    const summary = document.createElement("summary");
+    const lyrics = document.createElement("section");
     const text = document.createElement("p");
     const trackId = track.querySelector("audio").id;
 
     lyrics.className = "lyrics";
-    summary.textContent = "Lyrics";
+    lyrics.setAttribute("aria-label", "Lyrics");
     text.textContent = customLyrics[trackId] || "Lyrics coming soon.";
 
-    lyrics.append(summary, text);
+    lyrics.append(text);
 
     track.append(lyrics);
 
@@ -83,6 +82,31 @@ document.querySelectorAll(".track").forEach((track) => {
 
 const getButton = (track) => document.querySelector(`.play-button[data-track="${track.id}"]`);
 const getProgress = (track) => document.querySelector(`.progress[data-track="${track.id}"]`);
+const progressAnimationFrames = new WeakMap();
+
+const updateProgressSmoothly = (track) => {
+
+    cancelAnimationFrame(progressAnimationFrames.get(track));
+
+    const update = () => {
+
+        if (Number.isFinite(track.duration)) {
+
+            getProgress(track).value = (track.currentTime / track.duration) * 100;
+
+        }
+
+        if (!track.paused && !track.ended) {
+
+            progressAnimationFrames.set(track, requestAnimationFrame(update));
+
+        }
+
+    };
+
+    progressAnimationFrames.set(track, requestAnimationFrame(update));
+
+};
 
 const resetControls = (track) => {
 
@@ -123,6 +147,7 @@ playButtons.forEach((button) => {
         track.play();
         button.textContent = "Pause";
         button.classList.add("is-playing");
+        updateProgressSmoothly(track);
 
     });
 
@@ -158,6 +183,7 @@ tracks.forEach((track) => {
 
     track.addEventListener("pause", () => {
 
+        cancelAnimationFrame(progressAnimationFrames.get(track));
         const button = getButton(track);
 
         button.textContent = "Play";

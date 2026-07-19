@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>if(localStorage.getItem("disable-bubble-zoom")==="true")document.documentElement.classList.add("disable-bubble-zoom");</script>
+    <title>Updates - aepuns</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@1,400;1,700&display=swap">
+    <link rel="stylesheet" href="css/bubble-page.css">
+    <link rel="stylesheet" href="css/updates.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+    <script src="js/supabase-config.js" defer></script>
+    <script src="js/bubble-page.js" defer></script>
+    <script src="js/updates.js" defer></script>
+</head>
+<body data-bubble="updates">
+    <main class="bubble-page">
+        <a class="back-link" href="index.html">&larr; Home</a>
+        <header class="page-header"><h1>updates</h1></header>
+        <section class="page-content updates-content" aria-label="Updates">
+            <p id="updates-status" role="status">Loading updates...</p>
+            <div id="updates-feed" class="updates-feed"></div>
+        </section>
+    </main>
+
+    <dialog id="admin-dialog" class="admin-dialog" aria-labelledby="admin-title">
+        <h2 id="admin-title">update editor</h2>
+
+        <form id="login-form" class="admin-form">
+            <label for="admin-email">email</label>
+            <input id="admin-email" name="email" type="email" autocomplete="username" required>
+            <label for="admin-password">password</label>
+            <input id="admin-password" name="password" type="password" autocomplete="current-password" required>
+            <button type="submit">sign in</button>
+        </form>
+        <p id="login-status" class="admin-status" role="status"></p>
+
+        <form id="update-form" class="admin-form" hidden>
+            <label for="update-title">title</label>
+            <input id="update-title" name="title" maxlength="120" required>
+            <label for="update-body">update</label>
+            <textarea id="update-body" name="body" rows="8" maxlength="5000" required></textarea>
+            <div class="admin-actions">
+                <button type="submit">post update</button>
+                <button id="admin-sign-out" class="secondary-button" type="button">sign out</button>
+            </div>
+        </form>
+
+        <p id="admin-status" class="admin-status" role="status"></p>
+        <button id="admin-close" class="admin-close" type="button" aria-label="Close">&times;</button>
+    </dialog>
+</body>
+</html>

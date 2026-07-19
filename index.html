@@ -12,6 +12,24 @@
 
     <title>aepuns</title>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@1,400;1,700&display=swap">
+
+    <script>
+        try {
+            if (sessionStorage.getItem("return-to-bubble")) {
+                document.documentElement.classList.add("returning-from-bubble");
+            }
+            if (localStorage.getItem("disable-bubble-zoom") === "true") {
+                document.documentElement.classList.add("disable-bubble-zoom");
+            }
+            if (localStorage.getItem("disable-background-motion") === "true") {
+                document.documentElement.classList.add("disable-background-motion");
+            }
+        } catch (error) {}
+    </script>
+
     <link
         rel="stylesheet"
         href="css/style.css">
@@ -19,6 +37,25 @@
 </head>
 
 <body>
+
+    <button
+        id="settings-button"
+        type="button"
+        aria-label="Open settings"
+        aria-expanded="false"
+        aria-controls="settings-panel">&#9881;&#xfe0e;</button>
+
+    <aside id="settings-panel" aria-label="Settings" hidden>
+        <h2>settings</h2>
+        <label>
+            <input id="disable-zoom" type="checkbox">
+            disable zoom effect
+        </label>
+        <label>
+            <input id="disable-background" type="checkbox">
+            disable moving background
+        </label>
+    </aside>
 
     <!-- =========================================
                     WEBSITE

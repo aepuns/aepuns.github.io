@@ -175,19 +175,40 @@ So you might ask, “What am I out here for?”
 But I’m just out for candy and nothing more`
 };
 
-document.querySelectorAll("details.lyrics").forEach((lyrics) => {
-    const trackId = lyrics.closest(".track").querySelector("audio").id;
+document.querySelectorAll("details.lyrics").forEach((details) => {
+    const lyrics = document.createElement("section");
+    const text = details.querySelector("p");
+    const trackId = details.closest(".track").querySelector("audio").id;
 
-    lyrics.open = true;
-    lyrics.querySelector("summary")?.remove();
+    lyrics.className = "lyrics";
+    lyrics.setAttribute("aria-label", "Lyrics");
+    lyrics.append(text);
+    details.replaceWith(lyrics);
 
     if (customLyrics[trackId]) {
-        lyrics.querySelector("p").textContent = customLyrics[trackId];
+        text.textContent = customLyrics[trackId];
     }
 });
 
 const getButton = (track) => document.querySelector(`.play-button[data-track="${track.id}"]`);
 const getProgress = (track) => document.querySelector(`.progress[data-track="${track.id}"]`);
+const progressAnimationFrames = new WeakMap();
+
+const updateProgressSmoothly = (track) => {
+    cancelAnimationFrame(progressAnimationFrames.get(track));
+
+    const update = () => {
+        if (Number.isFinite(track.duration)) {
+            getProgress(track).value = (track.currentTime / track.duration) * 100;
+        }
+
+        if (!track.paused && !track.ended) {
+            progressAnimationFrames.set(track, requestAnimationFrame(update));
+        }
+    };
+
+    progressAnimationFrames.set(track, requestAnimationFrame(update));
+};
 
 const resetControls = (track) => {
     getButton(track).textContent = "Play";
@@ -205,10 +226,13 @@ playButtons.forEach((button) => {
         track.play();
         button.textContent = "Pause";
         button.classList.add("is-playing");
+        updateProgressSmoothly(track);
     });
 });
 
 progressBars.forEach((progress) => {
+    progress.step = "any";
+
     progress.addEventListener("input", () => {
         const track = document.querySelector(`#${progress.dataset.track}`);
         if (Number.isFinite(track.duration)) track.currentTime = (progress.value / 100) * track.duration;
@@ -219,6 +243,13 @@ tracks.forEach((track) => {
     track.addEventListener("timeupdate", () => {
         if (Number.isFinite(track.duration)) getProgress(track).value = (track.currentTime / track.duration) * 100;
     });
-    track.addEventListener("pause", () => { getButton(track).textContent = "Play"; getButton(track).classList.remove("is-playing"); });
+    track.addEventListener("pause", () => {
+        cancelAnimationFrame(progressAnimationFrames.get(track));
+        getButton(track).textContent = "Play";
+        getButton(track).classList.remove("is-playing");
+    });
     track.addEventListener("ended", () => resetControls(track));
 });
+if (localStorage.getItem("disable-bubble-zoom") === "true") {
+    document.documentElement.classList.add("disable-bubble-zoom");
+}

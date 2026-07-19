@@ -1,15 +1,25 @@
-:root{color-scheme:light;}
+:root{color-scheme:light;background:#fff;}
 *{box-sizing:border-box;}
 body{min-width:320px;min-height:100vh;margin:0;padding:32px 20px;color:#111;background:#fff;font-family:"Roboto",Arial,Helvetica,sans-serif;font-style:italic;font-weight:700;animation:page-fade-in .4s linear both;}
+html.disable-bubble-zoom body{animation:none;}
+body::after{content:"";position:fixed;inset:0;z-index:1000;background:#fff;opacity:0;pointer-events:none;transition:opacity .35s ease;}
+body.is-leaving::after{opacity:1;}
 .music-page{width:min(1000px,100%);margin:0 auto;}
-.back-link{display:inline-block;margin-bottom:36px;color:inherit;text-decoration:none;}
+.back-link{display:inline-flex;align-items:center;gap:5px;margin-bottom:36px;color:inherit;font-size:0;text-decoration:none;}
+.back-link::before{content:"";width:18px;height:18px;background:currentColor;clip-path:polygon(0 50%,40% 12%,40% 37%,100% 37%,100% 63%,40% 63%,40% 88%);}
+.back-link::after{content:"Home";font-size:1rem;}
 .music-header{margin-bottom:34px;}
-.music-header h1{margin:0;font-size:clamp(3rem,10vw,5.5rem);letter-spacing:-.08em;}
-.release-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:30px;}
+.music-header h1{margin:0;font-size:clamp(3rem,10vw,5.5rem);letter-spacing:-.03em;}
+.release-grid{position:relative;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-flow:dense;gap:30px;}
+.release-grid::after{content:"";position:absolute;top:0;bottom:0;left:50%;width:2px;background:currentColor;transform:translateX(-50%);}
 .release-card{display:block;color:inherit;text-align:center;text-decoration:none;}
+.release-card:first-child{grid-column:span 2;grid-row:span 2;}
+.release-card:first-child::before{content:"newest";display:block;margin:0 0 14px;font-size:1.5rem;text-align:left;}
 .release-card img{display:block;width:100%;aspect-ratio:1;object-fit:cover;border:3px solid currentColor;border-radius:8px;transition:transform .2s ease,box-shadow .2s ease;}
 .release-card:hover img,.release-card:focus-visible img{transform:translateY(-5px);box-shadow:0 10px 0 currentColor;}
 .release-card h2{margin:13px 0 1px;font-size:1.15rem;}
 .release-card time{color:#777;font-size:.75rem;}
 @keyframes page-fade-in{from{opacity:0;}to{opacity:1;}}
-@media (prefers-reduced-motion:reduce){body{animation:none;}}
+@media (max-width:760px){.release-grid{grid-template-columns:repeat(2,minmax(0,1fr));}.release-grid::after{display:none;}.release-card:first-child{grid-row:auto;}}
+@media (max-width:480px){.release-grid{grid-template-columns:1fr;}.release-card:first-child{grid-column:auto;}}
+@media (prefers-reduced-motion:reduce){body{animation:none;}body::after{transition:none;}}

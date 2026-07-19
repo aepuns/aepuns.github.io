@@ -3,22 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>if(localStorage.getItem("disable-bubble-zoom")==="true")document.documentElement.classList.add("disable-bubble-zoom");</script>
     <title>aepuns - Music</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@1,700&display=swap">
     <link rel="stylesheet" href="css/music.css">
+    <script src="js/music-page.js" defer></script>
 </head>
 <body>
     <main class="music-page">
         <a class="back-link" href="index.html">&larr; Home</a>
         <header class="music-header"><h1>music</h1></header>
         <section class="release-grid" aria-label="Music releases">
-            <a class="release-card" href="releases/the-album-zip.html"><img src="coverimages/TheAlbum.ZipCover.png" alt="the album.zip cover"><h2>the album.zip</h2><time datetime="2023-07-05">2023-07-05</time></a>
-            <a class="release-card" href="releases/i-missed-halloween.html"><img src="coverimages/IMissedHalloweenCover.png" alt="I Missed Halloween cover"><h2>I Missed Halloween</h2><time datetime="2024-11-04">2024-11-04</time></a>
-            <a class="release-card" href="releases/frogs.html"><img src="coverimages/FrogsCover.png" alt="Frogs cover"><h2>Frogs</h2><time datetime="2025-06-21">2025-06-21</time></a>
-            <a class="release-card" href="releases/aliens-remastered.html"><img src="coverimages/Aliens(Remastered)Cover.png" alt="Aliens Remastered cover"><h2>Aliens (Remastered)</h2><time datetime="2025-12-25">2025-12-25</time></a>
             <a class="release-card" href="releases/rock-revival-restoration.html"><img src="coverimages/RockRevival%26RestorationCover.png" alt="Rock Revival and Restoration cover"><h2>Rock Revival &amp; Restoration</h2><time datetime="2026-07-05">2026-07-05</time></a>
+            <a class="release-card" href="releases/aliens-remastered.html"><img src="coverimages/Aliens(Remastered)Cover.png" alt="Aliens Remastered cover"><h2>Aliens (Remastered)</h2><time datetime="2025-12-25">2025-12-25</time></a>
+            <a class="release-card" href="releases/frogs.html"><img src="coverimages/FrogsCover.png" alt="Frogs cover"><h2>Frogs</h2><time datetime="2025-06-21">2025-06-21</time></a>
+            <a class="release-card" href="releases/i-missed-halloween.html"><img src="coverimages/IMissedHalloweenCover.png" alt="I Missed Halloween cover"><h2>I Missed Halloween</h2><time datetime="2024-11-04">2024-11-04</time></a>
+            <a class="release-card" href="releases/the-album-zip.html"><img src="coverimages/TheAlbum.ZipCover.png" alt="the album.zip cover"><h2>the album.zip</h2><time datetime="2023-07-05">2023-07-05</time></a>
         </section>
     </main>
 </body>
