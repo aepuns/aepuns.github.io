@@ -1,16 +1,19 @@
 .updates-content{max-width:760px;text-align:left;}
 .updates-content>p{text-align:center;}
 .updates-feed{display:grid;gap:22px;}
-.update-entry{position:relative;padding:22px 92px 22px 22px;border:2px solid currentColor;border-radius:8px;}
+.update-entry{position:relative;padding:22px;border:2px solid currentColor;border-radius:8px;}
 .update-entry h2{margin:0 0 15px;font-size:1.5rem;}
 .update-entry time{display:block;margin-bottom:6px;color:#777;font-size:.8rem;}
 .update-entry p{white-space:pre-wrap;}
-.like-button{position:absolute;top:16px;right:16px;display:inline-flex;align-items:center;gap:7px;padding:7px 11px;border:2px solid #111;border-radius:999px;color:#111;background:#fff;cursor:pointer;font:inherit;}
+.update-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-top:16px;}
+.like-button{display:inline-flex;align-items:center;gap:7px;padding:7px 11px;border:2px solid #111;border-radius:999px;color:#111;background:#fff;cursor:pointer;font:inherit;}
 .like-button:hover,.like-button:focus-visible,.like-button[aria-pressed="true"]{color:#fff;background:#111;}
-.like-button:disabled{cursor:wait;opacity:.55;}
+.like-button:disabled,.delete-button:disabled{cursor:wait;opacity:.55;}
 .like-heart{width:20px;height:20px;overflow:visible;}
 .like-heart path{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
 .like-button[aria-pressed="true"] .like-heart path{fill:currentColor;}
+.delete-button{padding:7px 11px;border:2px solid #b42318;border-radius:999px;color:#b42318;background:#fff;cursor:pointer;font:inherit;}
+.delete-button:hover,.delete-button:focus-visible{color:#fff;background:#b42318;}
 .admin-dialog{width:min(520px,calc(100% - 32px));padding:28px;border:3px solid #111;border-radius:10px;color:#111;background:#fff;font-family:"Roboto",Arial,Helvetica,sans-serif;font-style:italic;font-weight:700;}
 .admin-dialog::backdrop{background:rgb(0 0 0 / .55);}
 .admin-dialog h2{margin:0 38px 24px 0;font-size:2rem;}
