@@ -1,5 +1,6 @@
 const updatesStatus = document.querySelector("#updates-status");
 const updatesFeed = document.querySelector("#updates-feed");
+const updatesTitle = document.querySelector("#updates-title");
 const adminDialog = document.querySelector("#admin-dialog");
 const adminClose = document.querySelector("#admin-close");
 const loginForm = document.querySelector("#login-form");
@@ -17,6 +18,8 @@ const secretSequence = [
     "ArrowUp"
 ];
 let sequencePosition = 0;
+let longPressTimer = null;
+let longPressStart = null;
 
 const client = window.supabase.createClient(
     window.AEPUNS_SUPABASE.url,
@@ -216,6 +219,57 @@ async function deleteUpdate(update, button) {
     await loadUpdates();
 }
 
+const openAdminDialog = async () => {
+    if (adminDialog.open) {
+        return;
+    }
+
+    const { data } = await client.auth.getSession();
+    setAdminView(data.session);
+    adminDialog.showModal();
+    (data.session?.user.id === adminUserId ? updateTitle : adminEmail).focus();
+};
+
+const cancelLongPress = () => {
+    window.clearTimeout(longPressTimer);
+    longPressTimer = null;
+    longPressStart = null;
+};
+
+updatesTitle.addEventListener("pointerdown", (event) => {
+    if (!event.isPrimary || event.button !== 0) {
+        return;
+    }
+
+    cancelLongPress();
+    longPressStart = { x: event.clientX, y: event.clientY };
+    longPressTimer = window.setTimeout(() => {
+        cancelLongPress();
+        openAdminDialog();
+    }, 700);
+});
+
+updatesTitle.addEventListener("pointermove", (event) => {
+    if (!longPressStart) {
+        return;
+    }
+
+    if (
+        Math.abs(event.clientX - longPressStart.x) > 10
+        || Math.abs(event.clientY - longPressStart.y) > 10
+    ) {
+        cancelLongPress();
+    }
+});
+
+["pointerup", "pointercancel", "pointerleave"].forEach((eventName) => {
+    updatesTitle.addEventListener(eventName, cancelLongPress);
+});
+
+updatesTitle.addEventListener("contextmenu", (event) => {
+    event.preventDefault();
+});
+
 document.addEventListener("keydown", async (event) => {
     if (event.target.matches("input, textarea")) {
         return;
@@ -232,10 +286,7 @@ document.addEventListener("keydown", async (event) => {
 
     if (sequencePosition === secretSequence.length) {
         sequencePosition = 0;
-        const { data } = await client.auth.getSession();
-        setAdminView(data.session);
-        adminDialog.showModal();
-        (data.session?.user.id === adminUserId ? updateTitle : adminEmail).focus();
+        await openAdminDialog();
     }
 });
 
