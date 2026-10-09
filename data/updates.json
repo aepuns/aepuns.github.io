@@ -1,6 +1,12 @@
 {
   "updates": [
     {
+      "id": "19d13b15-6187-48ec-afc2-50497ce96079",
+      "title": "website update - 2.0 changelog",
+      "body": "- Added a Github-based updates system (no need to keep it online every week)\n- Better dark mode support\n- Added more socials and fixed the broken Twitch link\n- Added the story of my username on the \"about\" page\n- Replaced the WIP bubble to add the \"projects & art\" tab, which holds details on ongoing projects and aepuns fanart",
+      "published_at": "2026-10-09T16:37:57.260Z"
+    },
+    {
       "id": "87225cee-3981-480f-92ca-34b6840ec32b",
       "title": "hi",
       "body": "big ol test",
