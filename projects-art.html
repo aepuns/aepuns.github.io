@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+    <script>if(localStorage.getItem("disable-bubble-zoom")==="true")document.documentElement.classList.add("disable-bubble-zoom");</script>
+    <title>Projects &amp; Art - aepuns</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@1,400;1,700&display=swap">
+    <link rel="stylesheet" href="css/bubble-page.css">
+    <script src="https://cdn.jsdelivr.net/npm/@twemoji/api@17.0.3/dist/twemoji.min.js" defer crossorigin="anonymous"></script>
+    <script src="js/bubble-page.js" defer></script>
+    <script src="js/projects-art.js" defer></script>
+</head>
+<body data-bubble="projects-art">
+    <main class="bubble-page">
+        <a class="back-link" href="index.html">&larr; Home</a>
+        <header class="page-header">
+            <h1 class="projects-art-title" aria-label="Projects and art">
+                <button class="projects-art-tab" type="button" data-section="projects" aria-controls="projects-panel" aria-pressed="true">projects</button>
+                <span aria-hidden="true">&amp;</span>
+                <button class="projects-art-tab" type="button" data-section="art" aria-controls="art-panel" aria-pressed="false">art</button>
+            </h1>
+        </header>
+        <section class="page-content projects-art-content" aria-label="Projects and art content">
+            <div id="projects-panel" class="projects-art-panel" data-panel="projects" role="tabpanel">
+                <article class="project-entry">
+                    <header class="project-entry-header">
+                        <p class="project-kicker">up next:</p>
+                        <h2>ANYONE AND ANYTHING</h2>
+                    </header>
+                    <div class="project-video">
+                        <iframe src="https://www.youtube-nocookie.com/embed/1AVzESeKYV0" title="ANYONE AND ANYTHING" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                    </div>
+                    <p class="project-description">this is a collab worked on by over 20 people, who were all instructed to just “build whatever, but try your best”</p>
+                </article>
+                <section class="project-section" aria-labelledby="upcoming-heading">
+                    <h2 id="upcoming-heading" class="projects-section-heading">UPCOMING</h2>
+                    <div class="project-section-divider"></div>
+                    <article class="project-entry">
+                        <header class="project-entry-header">
+                            <h2>NEW SOLO 👀</h2>
+                        </header>
+                        <p class="project-description">yeah i figure i should do something on my own for once lol. estimated to be over 4 minutes long and my most ambitious project ever</p>
+                    </article>
+                </section>
+                <section class="project-section" aria-labelledby="done-heading">
+                    <h2 id="done-heading" class="projects-section-heading">DONE</h2>
+                    <div class="project-section-divider"></div>
+                </section>
+            </div>
+            <div id="art-panel" class="projects-art-panel" data-panel="art" role="tabpanel" hidden>
+                <p class="fanart-intro">beautiful fan art from beautiful people</p>
+
+                <div class="fanart-groups">
+                    <section class="fanart-group" aria-labelledby="fanart-artist-2">
+                        <h2 id="fanart-artist-2">@AlfredoAlien1919</h2>
+                        <p class="fanart-source">on YouTube</p>
+                        <div class="fanart-gallery">
+                            <figure><img src="images/fanart/alfredo1.png" alt="Fan art by @AlfredoAlien1919" loading="lazy"></figure>
+                            <figure><img src="images/fanart/alfredo2.png" alt="Fan art by @AlfredoAlien1919" loading="lazy"></figure>
+                        </div>
+                    </section>
+
+                    <section class="fanart-group" aria-labelledby="fanart-artist-3">
+                        <h2 id="fanart-artist-3">@heleophrynes</h2>
+                        <p class="fanart-source">on Discord</p>
+                        <div class="fanart-gallery">
+                            <figure><img src="images/fanart/heleophrynes1.png" alt="Fan art by @heleophrynes" loading="lazy"></figure>
+                        </div>
+                    </section>
+
+                    <section class="fanart-group" aria-labelledby="fanart-artist-4">
+                        <h2 id="fanart-artist-4">@notsorad_e</h2>
+                        <p class="fanart-source">on Discord</p>
+                        <div class="fanart-gallery">
+                            <figure><img src="images/fanart/imrad1.jpg" alt="Fan art by @notsorad_e" loading="lazy"></figure>
+                            <figure><img src="images/fanart/imrad2.jpg" alt="Fan art by @notsorad_e" loading="lazy"></figure>
+                        </div>
+                    </section>
+
+                    <section class="fanart-group" aria-labelledby="fanart-artist-5">
+                        <h2 id="fanart-artist-5">@kirbykirb</h2>
+                        <p class="fanart-source">on Discord</p>
+                        <div class="fanart-gallery">
+                            <figure><img src="images/fanart/kirbykirb1.png" alt="Fan art by @kirbykirb" loading="lazy"></figure>
+                        </div>
+                    </section>
+
+                    <section class="fanart-group" aria-labelledby="fanart-artist-6">
+                        <h2 id="fanart-artist-6">@purple_space</h2>
+                        <p class="fanart-source">on Discord</p>
+                        <div class="fanart-gallery">
+                            <figure><img src="images/fanart/purple1.png" alt="Fan art by @purple_space" loading="lazy"></figure>
+                        </div>
+                    </section>
+
+                    <section class="fanart-group" aria-labelledby="fanart-artist-7">
+                        <h2 id="fanart-artist-7">@markzuccatron</h2>
+                        <p class="fanart-source">on Discord</p>
+                        <div class="fanart-gallery">
+                            <figure><img src="images/fanart/snownt1.png" alt="Fan art by @markzuccatron" loading="lazy"></figure>
+                            <figure><img src="images/fanart/snownt2.png" alt="Fan art by @markzuccatron" loading="lazy"></figure>
+                        </div>
+                    </section>
+
+                    <section class="fanart-group" aria-labelledby="fanart-artist-1">
+                        <h2 id="fanart-artist-1">aepuns (i just really like this drawing lol)</h2>
+                        <div class="fanart-gallery">
+                            <figure><img src="images/fanart/aepuns1.jpg" alt="Drawing of aepuns" loading="lazy"></figure>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
