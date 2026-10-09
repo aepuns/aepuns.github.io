@@ -23,3 +23,11 @@ body.is-leaving::after{opacity:1;}
 @media (max-width:760px){.release-grid{grid-template-columns:repeat(2,minmax(0,1fr));}.release-grid::after{display:none;}.release-card:first-child{grid-row:auto;}}
 @media (max-width:480px){.release-grid{grid-template-columns:1fr;}.release-card:first-child{grid-column:auto;}}
 @media (prefers-reduced-motion:reduce){body{animation:none;}body::after{transition:none;}}
+@media (prefers-color-scheme:dark){
+  body{background:#aeaeae;animation:none;}
+  body::before{content:"";position:fixed;inset:0;z-index:0;background:#aeaeae;opacity:0;transition:opacity .16s linear;}
+  body.is-dark-landing-background::before{opacity:1;}
+  .music-page{position:relative;z-index:1;opacity:0;transition:opacity .16s linear;}
+  body.is-dark-landing-visible .music-page{opacity:1;}
+  .release-card time{color:#444;}
+}

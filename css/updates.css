@@ -6,6 +6,7 @@
 .update-entry h2{margin:0 0 15px;font-size:1.5rem;}
 .update-entry time{display:block;margin-bottom:6px;color:#777;font-size:.8rem;}
 .update-entry p{white-space:pre-wrap;}
+.update-entry img{display:block;max-width:100%;height:auto;margin-top:16px;}
 .update-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-top:16px;}
 .like-button{display:inline-flex;align-items:center;gap:7px;padding:7px 11px;border:2px solid #111;border-radius:999px;color:#111;background:#fff;cursor:pointer;font:inherit;}
 .like-button:hover,.like-button:focus-visible,.like-button[aria-pressed="true"]{color:#fff;background:#111;}
@@ -31,3 +32,4 @@
 .admin-status.is-success{color:#167d32;}
 .admin-status.is-error{color:#b42318;}
 @media (max-width:480px){.admin-actions{flex-direction:column;gap:0;}}
+@media (prefers-color-scheme:dark){.update-entry time,.admin-status{color:#444;}}

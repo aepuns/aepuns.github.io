@@ -14,7 +14,7 @@ const bubblePages = {
     updates: "updates.html",
     music: "music.html",
     about: "about.html",
-    wip: "wip.html",
+    "projects-art": "projects-art.html",
     socials: "socials.html"
 };
 let isTransitioning = false;
@@ -106,6 +106,7 @@ if (returnFromBubble) {
     blankBubble.style.transform = "none";
     stage.append(blankBubble);
 
+    bubble.classList.add("is-hidden-for-return");
     document.body.classList.add("is-preparing-return", "is-returning-home", "is-transitioning", "is-zooming", "is-fading");
     stage.classList.add("is-zooming");
     stage.getBoundingClientRect();
@@ -128,6 +129,7 @@ if (returnFromBubble) {
         stage.classList.remove("is-zooming");
 
         window.setTimeout(() => {
+            bubble.classList.remove("is-hidden-for-return");
             blankBubble.classList.remove("is-visible");
             blankBubble.addEventListener("transitionend", () => {
                 blankBubble.remove();

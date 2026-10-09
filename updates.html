@@ -11,11 +11,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@1,400;1,700&display=swap">
     <link rel="stylesheet" href="css/bubble-page.css">
-    <link rel="stylesheet" href="css/updates.css?v=4">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-    <script src="js/supabase-config.js" defer></script>
+    <link rel="stylesheet" href="css/updates.css?v=5">
     <script src="js/bubble-page.js" defer></script>
-    <script src="js/updates.js?v=5" defer></script>
+    <script src="js/updates.js?v=6" defer></script>
 </head>
 <body data-bubble="updates">
     <main class="bubble-page">
@@ -31,10 +29,9 @@
         <h2 id="admin-title">update editor</h2>
 
         <form id="login-form" class="admin-form">
-            <label for="admin-email">email</label>
-            <input id="admin-email" name="email" type="email" autocomplete="username" required>
-            <label for="admin-password">password</label>
-            <input id="admin-password" name="password" type="password" autocomplete="current-password" required>
+            <label for="github-token">GitHub token</label>
+            <input id="github-token" name="token" type="password" autocomplete="off" required>
+            <small>Used only for this session; it is never saved.</small>
             <button type="submit">sign in</button>
         </form>
         <p id="login-status" class="admin-status" role="status"></p>
@@ -44,6 +41,8 @@
             <input id="update-title" name="title" maxlength="120" required>
             <label for="update-body">update</label>
             <textarea id="update-body" name="body" rows="8" maxlength="5000" required></textarea>
+            <label for="update-file">image or attachment (optional)</label>
+            <input id="update-file" name="attachment" type="file">
             <div class="admin-actions">
                 <button type="submit">post update</button>
                 <button id="admin-sign-out" class="secondary-button" type="button">sign out</button>

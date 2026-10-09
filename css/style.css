@@ -305,7 +305,7 @@ body.is-fading #website::before{
 
     z-index:1;
 
-    width:min(900px,95vw);
+    width:min(900px,95vw,calc(95vh * 9 / 7));
 
     aspect-ratio:9/7;
 
@@ -449,7 +449,7 @@ body.is-fading #website::before{
 
 /* WIP */
 
-#wip{
+#projects-art{
 
     right:22%;
     top:29%;
@@ -545,6 +545,32 @@ body.is-fading #website::before{
 
 }
 
+.bubble.is-hidden-for-return{
+
+    opacity:0;
+
+}
+
+#site-version{
+
+    position:fixed;
+    left:18px;
+    bottom:12px;
+    z-index:40;
+    margin:0;
+    color:#111;
+    font:italic 400 14px Roboto, sans-serif;
+
+}
+
+@media (prefers-color-scheme:dark){
+
+    #site-version{
+        color:#fff;
+    }
+
+}
+
 /* ==========================================================
                     BUBBLE POINTS
 ========================================================== */
@@ -577,7 +603,7 @@ body.is-fading #website::before{
 
 }
 
-#point-wip{
+#point-projects-art{
 
     left:calc(67.5% - 3px);
     top:40%;

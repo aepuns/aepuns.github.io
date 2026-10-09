@@ -2,6 +2,13 @@ const playButtons = document.querySelectorAll(".play-button");
 const tracks = document.querySelectorAll("audio");
 const progressBars = document.querySelectorAll(".progress");
 
+if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+    requestAnimationFrame(() => {
+        document.body.classList.add("is-dark-landing-background");
+        window.setTimeout(() => document.body.classList.add("is-dark-landing-visible"), 160);
+    });
+}
+
 const customLyrics = {
     "aliens-remastered": `[Chorus]
 The aliens have found earth and

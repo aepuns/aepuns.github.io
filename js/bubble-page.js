@@ -3,6 +3,13 @@ const bubbleId = document.body.dataset.bubble;
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 let isLeaving = false;
 
+if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+    requestAnimationFrame(() => {
+        document.body.classList.add("is-dark-landing-background");
+        window.setTimeout(() => document.body.classList.add("is-dark-landing-visible"), 160);
+    });
+}
+
 window.addEventListener("pageshow", (event) => {
     if (event.persisted) {
         isLeaving = false;
