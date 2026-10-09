@@ -1,0 +1,15 @@
+{
+  "updates": [
+    {
+      "id": "87225cee-3981-480f-92ca-34b6840ec32b",
+      "title": "hi",
+      "body": "big ol test",
+      "published_at": "2026-10-09T05:24:16.693Z",
+      "attachment": {
+        "name": "imrad1.jpg",
+        "path": "uploads/updates/1791523455291-imrad1.jpg",
+        "type": "image/jpeg"
+      }
+    }
+  ]
+}
