@@ -1,9 +1,66 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>stream | aepuns</title><style>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>stream | aepuns</title><meta name="color-scheme" content="light dark"><style>
 :root{font-family:Roboto,Arial,sans-serif;color:#111;background:#f5f5f5}*{box-sizing:border-box}body{margin:0}main{max-width:1150px;padding:28px 18px;margin:auto}h1{font-size:32px}h2{font-size:21px}.cols{display:grid;grid-template-columns:2fr 1fr;gap:15px}.offline{min-height:300px;background:#090909;color:white;display:grid;place-items:center;font-weight:700;font-size:30px}.chat{min-height:300px}.panel{background:#fff;border:1px solid #ddd;padding:18px;border-radius:10px;margin:15px 0}button{font:inherit;cursor:pointer;border:1px solid #222;background:#fff;border-radius:7px;padding:8px 12px}button:disabled{opacity:.6;cursor:not-allowed}.tags{display:flex;flex-wrap:wrap;gap:7px}.active{background:#111;color:white}.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(115px,1fr));gap:10px;margin-top:14px}.reaction{display:flex;align-items:center;flex-direction:column;gap:5px;min-height:126px}.reaction img{width:80px;height:80px;object-fit:contain;image-rendering:pixelated}.credit{font-size:12px;color:#555;overflow-wrap:anywhere;text-align:center}.credit a{color:inherit;text-decoration:underline}.status{min-height:22px;font-size:14px;color:#555}.fine{font-size:12px;color:#777;text-align:center;margin:50px 0 10px}@media(max-width:720px){.cols{grid-template-columns:1fr}.offline,.chat{min-height:190px}}
-</style></head><body><main><a href="/">← Home</a><h1>stream</h1><div class="cols"><div class="offline" aria-label="Stream offline">OFFLINE</div><div class="offline chat" aria-label="Combined chat offline">OFFLINE</div></div><p class="status">Live player and merged read-only chat will activate after YouTube/Twitch authentication is configured.</p><section class="panel"><h2>send a reaction</h2><p id="availability" class="status">Loading reactions…</p><div id="tags" class="tags"></div><div id="gallery" class="gallery"></div><p id="sent" class="status" role="status"></p></section><section class="panel"><h2>secrets</h2><p>Hear anything suspicious? <a href="/secrets/">Redeem a secret word here.</a></p></section><footer class="fine" id="schedule">Regular streams: Monday and Friday, 10 PM Atlantic. Additional weekday stream when possible.</footer></main><script>
-const API='https://aepuns-secrets-api.sheav06.workers.dev',tags=document.getElementById('tags'),gallery=document.getElementById('gallery'),available=document.getElementById('availability'),sent=document.getElementById('sent');let data={items:[],tags:[]},selected='All';
-function view(){tags.replaceChildren();for(const name of ['All',...data.tags]){const button=document.createElement('button');button.textContent=name;button.className=name===selected?'active':'';button.onclick=()=>{selected=name;view()};tags.append(button)}gallery.replaceChildren();for(const r of data.items.filter(x=>selected==='All'||x.tags.includes(selected))){const box=document.createElement('div');box.className='reaction';const b=document.createElement('button');b.disabled=!data.enabled;b.title='Send reaction';const img=new Image();img.src=r.image;img.alt='Reaction by '+r.artist;b.append(img);b.onclick=async()=>{b.disabled=true;sent.textContent='Sending…';try{const response=await fetch(API+'/reactions/send',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code:r.code})});const result=await response.json();if(!response.ok)throw Error(result.error||'Could not send reaction');sent.textContent='Reaction sent!'}catch(e){sent.textContent=e.message}finally{setTimeout(()=>{b.disabled=!data.enabled},1200)}};const credit=document.createElement('div');credit.className='credit';if(r.artist){credit.append('made by ');if(r.url){const a=document.createElement('a');a.href=r.url;a.rel='noopener noreferrer';a.target='_blank';a.textContent=r.artist;credit.append(a)}else credit.append(r.artist)}box.append(b,credit);gallery.append(box)}}
-async function refresh(){try{const response=await fetch(API+'/reactions/config',{cache:'no-store'});if(!response.ok)throw Error('Reactions unavailable');data=await response.json();available.textContent=!data.live?'Reactions are available only while Aepuns is live.':!data.enabled?'Reactions are currently disabled.':'Choose a reaction to send to the stream.';view()}catch(e){available.textContent=e.message}}refresh();setInterval(refresh,10000);
+
+/* Accessible automatic theme plus explicit visitor choice. */
+:root{color-scheme:light;--page:#f5f5f5;--text:#141414;--panel:#fff;--border:#d9d9d9;--muted:#555;--button:#fff;--button-text:#171717;--active:#161616;--active-text:white}
+:root[data-theme="dark"]{color-scheme:dark;--page:#111019;--text:#f4f1fa;--panel:#1c1928;--border:#40384f;--muted:#c1b8cd;--button:#292436;--button-text:#f4f1fa;--active:#c3a4ff;--active-text:#130b22}
+body{background:var(--page);color:var(--text)}.panel{background:var(--panel);border-color:var(--border)}button{background:var(--button);border-color:var(--border);color:var(--button-text)}button.active{background:var(--active);color:var(--active-text)}.status,.credit{color:var(--muted)}a{color:inherit}.offline{background:#08080a;color:white}
+.topline{display:flex;align-items:center;justify-content:space-between;gap:14px}.theme-toggle{white-space:nowrap}
+.reaction button{position:relative;overflow:hidden;isolation:isolate}.reaction button:disabled{opacity:1;cursor:not-allowed}
+.reaction button img{display:block}.reaction .shade{position:absolute;inset:0;background:rgba(107,107,112,.68);transform-origin:bottom;transform:scaleY(0);pointer-events:none;z-index:1;transition:transform .2s linear}
+.reaction button.waiting .shade{transform:scaleY(var(--shade,1))}.reaction button.offline .shade{transform:scaleY(1)}
+.reaction button.waiting,.reaction button.offline{filter:grayscale(1)}
+.reaction button .remaining{position:absolute;inset:0;display:grid;place-items:center;z-index:2;font-size:13px;font-weight:750;color:#fff;text-shadow:0 1px 3px #111;pointer-events:none}
+.cooldown-track{height:6px;background:var(--border);border-radius:9px;overflow:hidden;max-width:360px;margin:8px 0}.cooldown-track>div{height:100%;width:0;background:var(--active);transition:width .1s linear}
+@media(prefers-reduced-motion:reduce){.reaction .shade,.cooldown-track>div{transition:none}}
+</style></head><body><main><div class="topline"><a href="/">← Home</a><button type="button" class="theme-toggle" id="themeToggle" aria-label="Toggle light and dark theme">Theme: Auto</button></div><h1>stream</h1><div class="cols"><div class="offline" aria-label="Stream offline">OFFLINE</div><div class="offline chat" aria-label="Combined chat offline">OFFLINE</div></div><p class="status">Live player and merged read-only chat will activate after YouTube/Twitch authentication is configured.</p><section class="panel"><h2>send a reaction</h2><p id="availability" class="status">Loading reactions…</p><div id="tags" class="tags"></div><div id="gallery" class="gallery"></div><p id="sent" class="status" role="status" aria-live="polite"></p><div class="cooldown-track" aria-hidden="true"><div id="cooldownProgress"></div></div></section><section class="panel"><h2>secrets</h2><p>Hear anything suspicious? <a href="/secrets/">Redeem a secret word here.</a></p></section><footer class="fine" id="schedule">Regular streams: Monday and Friday, 10 PM Atlantic. Additional weekday stream when possible.</footer></main><script>
+const API='https://aepuns-secrets-api.sheav06.workers.dev';
+const tags=document.getElementById('tags'),gallery=document.getElementById('gallery'),available=document.getElementById('availability'),sent=document.getElementById('sent');
+const timerBar=document.getElementById('cooldownProgress');
+let data={items:[],tags:[],enabled:false,live:false,cooldown:5},selected='All',sending=false;
+const cooldownKey='aepuns-reactions-cooldown-end-v04';
+let cooldownEnd=Number(localStorage.getItem(cooldownKey)||0);
+let cooldownLength=Number(localStorage.getItem(cooldownKey+'-duration')||0);
+let renderedSignature='';
+const themeToggle=document.getElementById('themeToggle');
+const systemTheme=matchMedia('(prefers-color-scheme: dark)');
+let themeChoice=localStorage.getItem('aepuns-stream-theme')||'auto';
+function setTheme(){document.documentElement.dataset.theme=themeChoice==='auto'?(systemTheme.matches?'dark':'light'):themeChoice;themeToggle.textContent='Theme: '+themeChoice[0].toUpperCase()+themeChoice.slice(1)}
+themeToggle.onclick=()=>{themeChoice=themeChoice==='auto'?'dark':themeChoice==='dark'?'light':'auto';localStorage.setItem('aepuns-stream-theme',themeChoice);setTheme()};
+systemTheme.addEventListener?.('change',()=>{if(themeChoice==='auto')setTheme()});setTheme();
+function setCooldown(seconds){cooldownLength=Math.max(0,Number(seconds)||0)*1000;cooldownEnd=Date.now()+cooldownLength;localStorage.setItem(cooldownKey,String(cooldownEnd));localStorage.setItem(cooldownKey+'-duration',String(cooldownLength));updateButtons()}
+function updateButtons(){const remaining=Math.max(0,cooldownEnd-Date.now());const offline=!data.live||!data.enabled;
+  for(const b of gallery.querySelectorAll('button[data-reaction]')){
+    b.disabled=offline||remaining>0||sending;b.classList.toggle('offline',offline);b.classList.toggle('waiting',!offline&&remaining>0);
+    const shade=b.querySelector('.shade'),label=b.querySelector('.remaining');
+    if(shade)shade.style.setProperty('--shade',offline?1:cooldownLength?remaining/cooldownLength:0);
+    if(label)label.textContent=offline?'':remaining>0?Math.ceil(remaining/1000)+'s':'';
+    b.setAttribute('aria-label',offline?'Reactions unavailable while offline':remaining>0?'Ready in '+Math.ceil(remaining/1000)+' seconds':'Send reaction');
+  }
+  timerBar.style.width=!offline&&remaining>0&&cooldownLength?Math.min(100,100*(1-remaining/cooldownLength))+'%':'0%';
+  if(!offline&&remaining>0)available.textContent='Cooldown: '+Math.ceil(remaining/1000)+' seconds until you can send another reaction.';
+  else if(!data.live)available.textContent='Aepuns is offline. Reactions are unavailable until the stream goes live.';
+  else if(!data.enabled)available.textContent='Reactions are currently disabled.';
+  else available.textContent='Choose a reaction to send to the stream.';
+}
+function view(){tags.replaceChildren();for(const name of ['All',...data.tags]){const button=document.createElement('button');button.textContent=name;button.className=name===selected?'active':'';button.onclick=()=>{selected=name;view()};tags.append(button)}
+ gallery.replaceChildren();for(const r of data.items.filter(x=>selected==='All'||(x.tags||[]).includes(selected))){
+  const box=document.createElement('div');box.className='reaction';const b=document.createElement('button');b.dataset.reaction=r.code;b.title='Send reaction';
+  const img=new Image();img.src=r.image;img.alt='Reaction artwork by '+(r.artist||'Aepuns');b.append(img);
+  const shade=document.createElement('span');shade.className='shade';shade.setAttribute('aria-hidden','true');b.append(shade);
+  const remaining=document.createElement('span');remaining.className='remaining';remaining.setAttribute('aria-hidden','true');b.append(remaining);
+  b.onclick=async()=>{if(sending||!data.enabled||Date.now()<cooldownEnd)return;sending=true;updateButtons();sent.textContent='Sending…';
+   try{const response=await fetch(API+'/reactions/send',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code:r.code})});const result=await response.json();if(!response.ok){if(response.status===429&&result.retry_after)setCooldown(result.retry_after);throw Error(result.error||'Could not send reaction')}
+     setCooldown(data.cooldown||0);sent.textContent='Reaction sent!';
+   }catch(e){sent.textContent=e.message}finally{sending=false;updateButtons()}};
+  const credit=document.createElement('div');credit.className='credit';if(r.artist){credit.append('made by ');if(r.url){const a=document.createElement('a');a.href=r.url;a.rel='noopener noreferrer';a.target='_blank';a.textContent=r.artist;credit.append(a)}else credit.append(r.artist)}
+  box.append(b,credit);gallery.append(box)}updateButtons();}
+async function refresh(){try{const response=await fetch(API+'/reactions/config',{cache:'no-store'});if(!response.ok)throw Error('Reactions unavailable');const newer=await response.json();data=newer;
+  const signature=JSON.stringify({tags:newer.tags,items:newer.items.map(x=>[x.code,x.artist,x.url,x.image,x.tags])});
+  if(!newer.tags.includes(selected)&&selected!=='All')selected='All';
+  if(signature!==renderedSignature){renderedSignature=signature;view()}else updateButtons();
+ }catch(e){available.textContent=e.message;data.enabled=false;updateButtons()}}
+refresh();setInterval(refresh,10000);setInterval(updateButtons,100);
 // Display each recurring time in the visitor's time zone based on the upcoming Halifax weekday.
 const now=new Date(),fmt=new Intl.DateTimeFormat('en-US',{timeZone:'America/Halifax',year:'numeric',month:'numeric',day:'numeric',weekday:'short'}),parts=Object.fromEntries(fmt.formatToParts(now).map(p=>[p.type,p.value]));
 const base=new Date(Date.UTC(+parts.year,+parts.month-1,+parts.day));let times=[];for(const day of [1,5]){let date=new Date(base);let delta=(day-date.getUTCDay()+7)%7;date.setUTCDate(date.getUTCDate()+delta);const test=new Date(Date.UTC(date.getUTCFullYear(),date.getUTCMonth(),date.getUTCDate(),22));const tztime=new Intl.DateTimeFormat('en-US',{timeZone:'America/Halifax',hour:'numeric',hourCycle:'h23'}).format(test);const offset=Number(tztime)-22;let utc=new Date(test.getTime()-offset*3600000);times.push(new Intl.DateTimeFormat(undefined,{weekday:'long',hour:'numeric',minute:'2-digit',timeZone:Intl.DateTimeFormat().resolvedOptions().timeZone}).format(utc))}document.getElementById('schedule').textContent='Regular streams (your local time): '+times.join(' · ')+' · Extra weekday stream when possible.';
