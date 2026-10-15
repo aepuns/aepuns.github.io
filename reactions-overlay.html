@@ -1,0 +1,25 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Aepuns Reactions OBS</title><style>html,body{margin:0;width:100%;height:100%;background:transparent;overflow:hidden}#stage{position:relative;width:100%;height:100%;overflow:hidden}img.reaction{position:absolute;object-fit:contain;image-rendering:pixelated;pointer-events:none;will-change:transform,opacity}</style></head><body><div id="stage"></div><script>
+const API='https://aepuns-secrets-api.sheav06.workers.dev';const params=new URLSearchParams(location.search),token=params.get('token');
+const preview=params.has('preview'),stage=document.getElementById('stage');let lastId=0,session=null,active=[],queue=[],cfg={},items=[],busy=false;
+const between=(v,r,min=0,max=10000)=>Math.max(min,Math.min(max,(Number(v)||0)+(Math.random()*2-1)*(Number(r)||0)));
+function pathClear(path,duration,avoid){if(!avoid)return true;return active.every(a=>{
+ const t=(performance.now()-a.start)/a.duration;if(t>=1)return true;
+ // Check proximity over the shared future duration, not just the current starting point.
+ for(let u=Math.max(0,t);u<=1;u+=.14){const x1=path.x+path.dx*u,y1=path.y-155*u;const x2=a.path.x+a.path.dx*u,y2=a.path.y-155*u;if(Math.hypot(x1-x2,y1-y2)<Math.max(32,path.size*.7))return false}return true
+})}
+function place(code){const art=items.find(x=>x.code===code&&x.enabled);if(!art)return true;if(active.length>=Math.max(1,cfg.maxOnScreen||8))return false;
+ const w=stage.clientWidth,h=stage.clientHeight,sz=between(cfg.startSize,cfg.startSizeVariation,1,500),esz=between(cfg.endSize,cfg.endSizeVariation,1,500),duration=Math.max(.2,Number(cfg.duration)||3)*1000;
+ let path;for(let i=0;i<30;i++){const x=(.12+Math.random()*.76)*w,y=h*.55,dx=(Number(cfg.drift)||0)+(Math.random()*2-1)*(Number(cfg.driftSpread)||0);const candidate={x:Math.max(sz/2,Math.min(w-sz/2,x)),y,dx:Math.max(-x+sz/2,Math.min(w-x-sz/2,dx)),size:sz};if(pathClear(candidate,duration,cfg.avoidOverlap)){path=candidate;break}}
+ if(!path)return false;
+ const node=new Image();node.className='reaction';node.src=art.image;node.style.width=sz+'px';node.style.height=sz+'px';node.style.left=(path.x-sz/2)+'px';node.style.top=(path.y-sz/2)+'px';stage.append(node);
+ const sa=between(cfg.startOpacity,cfg.startOpacityVariation,0,100)/100,ea=between(cfg.endOpacity,cfg.endOpacityVariation,0,100)/100;const record={node,path,start:performance.now(),duration};active.push(record);
+ const movement=node.animate([{transform:'translate(0,0) scale(1)',opacity:sa},{transform:`translate(${path.dx}px,${-Math.max(150,h*.45)}px) scale(${esz/sz})`,opacity:ea}],{duration,easing:'ease-out',fill:'forwards'});
+ movement.onfinish=()=>{node.remove();active=active.filter(x=>x!==record);pump()};return true;
+}
+function pump(){if(busy)return;busy=true;while(queue.length&&active.length<Math.max(1,cfg.maxOnScreen||8)){const next=queue[0];if(Date.now()-next.added>120000){queue.shift();continue}if(place(next.code))queue.shift();else break}busy=false}
+function enqueue(code){const count=Math.max(1,Math.min(30,Math.round((Number(cfg.minPerClick)||1)+Math.random()*(Math.max(Number(cfg.minPerClick)||1,Number(cfg.maxPerClick)||1)-(Number(cfg.minPerClick)||1)+1))));for(let i=0;i<count;i++)queue.push({code,added:Date.now()});pump()}
+async function poll(){if(!token&&!preview)return;try{if(preview&&!token){cfg={maxOnScreen:8,minPerClick:1,maxPerClick:3,startSize:64,startSizeVariation:12,endSize:30,endSizeVariation:8,startOpacity:100,startOpacityVariation:0,endOpacity:0,endOpacityVariation:0,duration:3,drift:0,driftSpread:50,avoidOverlap:true};if(!items.length)items=[{code:'demo',enabled:true,image:'../assets/starter.png'}];return}
+ const res=await fetch(API+'/reactions/feed?'+new URLSearchParams({token,after:String(lastId)}),{cache:'no-store',referrerPolicy:'no-referrer'});if(!res.ok)throw Error('Reaction feed '+res.status);const data=await res.json();cfg=data.settings||{};items=data.items||[];if(session!==null&&session!==data.session){queue=[];active.forEach(x=>x.node.remove());active=[];lastId=0}session=data.session;for(const event of data.events||[]){if(event.id>lastId)enqueue(event.code);lastId=Math.max(lastId,event.id)}lastId=Math.max(lastId,Number(data.latest)||0);if(!cfg.live){queue=[];active.forEach(x=>x.node.remove());active=[]}
+ }catch(e){console.warn('Reaction feed:',e.message)}}
+if(preview&&!token){poll();setInterval(()=>enqueue('demo'),2500)}else{poll();setInterval(poll,2000)}
+</script></body></html>
