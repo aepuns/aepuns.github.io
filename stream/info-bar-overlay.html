@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Aepuns Info Banner | OBS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@1,700&display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent!important}
+*{box-sizing:border-box}
+body{display:flex;align-items:center;justify-content:center;font:italic 700 clamp(18px,4vw,34px) Roboto,Arial,sans-serif;color:#fff;text-shadow:0 2px 4px #000,0 1px 12px #000;-webkit-font-smoothing:antialiased}
+#headline{display:block;text-align:center;width:98%;white-space:normal;overflow-wrap:break-word;line-height:1.2;opacity:0;transition:opacity .6s linear}
+</style></head><body><div id="headline" role="status" aria-live="off"></div>
+<script>
+'use strict';
+const API='https://aepuns-secrets-api.sheav06.workers.dev/site/info-bar';
+const el=document.getElementById('headline');
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+let settings={enabled:false,shuffle:false,hold:12,fadeIn:.6,fadeOut:.6,gap:.3,items:[]};
+let order=[],index=0,revision=0,lastKey='';
+function sequence(xs,shuffle){const arr=[...xs];if(shuffle){for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]]}}return arr}
+function ms(n,max=300){return Math.max(0,Math.min(max,Number(n)||0))*1000}
+async function refresh(){
+ try{
+ const r=await fetch(API,{cache:'no-store'});
+ if(!r.ok)throw Error('Info bar returned '+r.status);
+ const v=await r.json();
+ const headlines=Array.isArray(v.items)?v.items.filter(x=>typeof x==='string'&&x.trim()).map(x=>x.trim()):[];
+ const key=JSON.stringify([v.shuffle,headlines]);
+ if(key!==lastKey){lastKey=key;order=sequence(headlines,!!v.shuffle);index=0;revision++}
+ const wasEnabled=settings.enabled;
+ settings={enabled:!!v.enabled,shuffle:!!v.shuffle,hold:v.hold,fadeIn:v.fadeIn,fadeOut:v.fadeOut,gap:v.gap,items:headlines};
+ if(wasEnabled&&!settings.enabled){revision++;el.style.opacity='0'}
+ }catch(e){console.warn('Info Bar:',e.message)}
+}
+async function loop(){
+ for(;;){
+  if(!settings.enabled||!order.length){el.style.opacity='0';await wait(250);continue}
+  const version=revision;
+  el.textContent=order[index%order.length];index++;
+  el.style.transitionDuration=ms(settings.fadeIn,30)+'ms';el.style.opacity='1';
+  let until=Date.now()+ms(settings.fadeIn,30)+ms(settings.hold);
+  while(Date.now()<until&&version===revision&&settings.enabled)await wait(Math.min(150,Math.max(20,until-Date.now())));
+  if(version!==revision||!settings.enabled){el.style.opacity='0';continue}
+  el.style.transitionDuration=ms(settings.fadeOut,30)+'ms';el.style.opacity='0';
+  until=Date.now()+ms(settings.fadeOut,30)+ms(settings.gap,30);
+  while(Date.now()<until&&version===revision&&settings.enabled)await wait(Math.min(150,Math.max(20,until-Date.now())));
+  if(index>=order.length&&settings.shuffle){order=sequence(settings.items,true);index=0}
+ }
+}
+refresh().then(loop);setInterval(refresh,3000);
+</script></body></html>
