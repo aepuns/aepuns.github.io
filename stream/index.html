@@ -37,6 +37,11 @@ button.active{background:var(--accent);color:var(--accent-text)}
 :root[data-theme="dark"]{--theme-base:#090909;--theme-surface:#202020}
 body,html{background:var(--page)}
 #settingsDialog,#leaderboardDialog{background:var(--panel);border-color:var(--border)}
+
+/* Neutral presets deliberately remove hue and preserve legible controls. */
+:root[data-accent="white"][data-theme="light"],:root[data-accent="black"][data-theme="light"]{--page:#fff;--panel:#fff;--button:#fff;--border:#c3c3c3;--active:#f3f3f3;--active-text:#111}
+:root[data-accent="white"][data-theme="dark"],:root[data-accent="black"][data-theme="dark"]{--page:#090909;--panel:#161616;--button:#222;--border:#696969;--active:#333;--active-text:#fff}
+:root[data-accent="white"] button.active,:root[data-accent="black"] button.active{background:var(--active);color:var(--active-text)}
 </style></head><body><main><div class="topline"><a href="/">← Home</a><button type="button" class="theme-toggle" id="themeToggle" aria-haspopup="dialog">⚙ Settings</button></div><h1>stream</h1><section class="panel"><h2>send a reaction</h2><p id="availability" class="status">Loading reactions…</p><div id="tags" class="tags"></div><div id="gallery" class="gallery"></div><p id="sent" class="status" role="status" aria-live="polite"></p><div class="cooldown-track" aria-hidden="true"><div id="cooldownProgress"></div></div></section><section class="panel"><h2>secrets</h2><iframe title="Enter a secret word and manage your account" id="secretsFrame" src="/secrets/?view=compact" onload="this.contentWindow.postMessage(themeMessage(),location.origin)" style="width:100%;height:270px;border:0;background:transparent" loading="lazy"></iframe><button type="button" id="leaderboardOpen" aria-haspopup="dialog">🏆 View leaderboard</button></section><dialog id="settingsDialog" aria-labelledby="settingsTitle"><div class="settings-head"><h2 id="settingsTitle">Settings</h2><button id="settingsClose" type="button">✕ Close</button></div><section class="settings-group"><h3>Appearance</h3><p>Display mode</p><div id="modeChoices" class="settings-options"></div><p>Accent color</p><div id="colorChoices" class="settings-options"></div></section><section class="settings-group"><h3>Account</h3><iframe title="Google sign-in and account settings" id="accountFrame" src="about:blank"></iframe></section></dialog><dialog id="leaderboardDialog" aria-labelledby="leaderboardTitle"><div class="board-header"><h2 id="leaderboardTitle">leaderboard</h2><button type="button" id="leaderboardClose" aria-label="Close leaderboard">✕ Close</button></div><iframe title="Leaderboard rankings" id="leaderboardFrame" src="about:blank" style="width:100%;height:min(65vh,600px);border:0;background:transparent"></iframe></dialog><footer class="fine" id="schedule" hidden>Regular streams: Monday and Friday, 10 PM Atlantic. Additional weekday stream when possible.</footer></main><script>
 window.addEventListener('message',event=>{
  if(event.origin!==location.origin||![document.getElementById('secretsFrame').contentWindow,document.getElementById('accountFrame').contentWindow].includes(event.source)||!['aepuns-secrets-height','aepuns-secrets-signin'].includes(event.data?.type))return;
@@ -71,9 +76,9 @@ const settingsDialog=document.getElementById('settingsDialog');
 const accountFrame=document.getElementById('accountFrame');
 const systemTheme=matchMedia('(prefers-color-scheme: dark)');
 const modes=['auto','light','dark'];
-const accents={red:'#c73543',orange:'#bd6416',yellow:'#977000',green:'#247d47',blue:'#3266c7',purple:'#7f46db'};
-const lightAccents={red:'#bd303e',orange:'#ae5410',yellow:'#886400',green:'#19703d',blue:'#2758bc',purple:'#7137ca'};
-const darkAccents={red:'#ff7883',orange:'#ffad65',yellow:'#f4d35e',green:'#69d99b',blue:'#8caeff',purple:'#c3a4ff'};
+const accents={red:'#c73543',orange:'#bd6416',yellow:'#977000',green:'#247d47',blue:'#3266c7',purple:'#7f46db',white:'#ffffff',black:'#000000'};
+const lightAccents={red:'#bd303e',orange:'#ae5410',yellow:'#886400',green:'#19703d',blue:'#2758bc',purple:'#7137ca',white:'#ffffff',black:'#000000'};
+const darkAccents={red:'#ff7883',orange:'#ffad65',yellow:'#f4d35e',green:'#69d99b',blue:'#8caeff',purple:'#c3a4ff',white:'#ffffff',black:'#000000'};
 let themeChoice=localStorage.getItem('aepuns-stream-theme')||'auto';
 if(!modes.includes(themeChoice))themeChoice='auto';
 let accentChoice=localStorage.getItem('aepuns-stream-accent')||'purple';
@@ -90,8 +95,9 @@ function notifyFrames(){
 function setTheme(){
  const resolved=themeChoice==='auto'?(systemTheme.matches?'dark':'light'):themeChoice;
  const accent=(resolved==='dark'?darkAccents:lightAccents)[accentChoice];
- const text=resolved==='dark'?'#17111e':'#fff';
+ const text=(accentChoice==='white'||accentChoice==='black')?(resolved==='dark'?'#fff':'#111'):(resolved==='dark'?'#17111e':'#fff');
  document.documentElement.dataset.theme=resolved;
+ document.documentElement.dataset.accent=accentChoice;
  document.documentElement.style.setProperty('--theme-color',accents[accentChoice]);
  document.documentElement.style.setProperty('--accent',accent);
  document.documentElement.style.setProperty('--accent-text',text);
