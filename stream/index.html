@@ -46,27 +46,52 @@ body,html{background:var(--page)}
 #colorChoices .color-choice{min-width:0;width:100%;aspect-ratio:1;padding:3px;border:2px solid transparent;border-radius:50%;background:transparent;display:grid;place-items:center}
 #colorChoices .color-choice .dot{width:100%;height:100%;border-radius:50%;border:1px solid var(--border);background:var(--swatch)}
 #colorChoices .color-choice[aria-pressed="true"]{border-color:var(--text);box-shadow:0 0 0 2px var(--panel),0 0 0 3px var(--accent)}
-</style></head><body><main><div class="topline"><a href="/">← Home</a><button type="button" class="theme-toggle" id="themeToggle" aria-haspopup="dialog">⚙ Settings</button></div><h1>stream</h1><section class="panel"><h2>send a reaction</h2><p id="availability" class="status">Loading reactions…</p><div id="tags" class="tags"></div><div id="gallery" class="gallery"></div><p id="sent" class="status" role="status" aria-live="polite"></p><div class="cooldown-track" aria-hidden="true"><div id="cooldownProgress"></div></div></section><section class="panel"><h2>secrets</h2><iframe title="Enter a secret word and manage your account" id="secretsFrame" src="/secrets/?view=compact&v=2" onload="this.contentWindow.postMessage(themeMessage(),location.origin)" style="width:100%;height:270px;border:0;background:transparent" loading="lazy"></iframe><button type="button" id="leaderboardOpen" aria-haspopup="dialog">🏆 View leaderboard</button></section><dialog id="settingsDialog" aria-labelledby="settingsTitle"><div class="settings-head"><h2 id="settingsTitle">Settings</h2><button id="settingsClose" type="button">✕ Close</button></div><section class="settings-group"><h3>Appearance</h3><p>Display mode</p><div id="modeChoices" class="settings-options"></div><p>Accent color</p><div id="colorChoices" class="settings-options"></div></section><section class="settings-group"><h3>Account</h3><iframe title="Google sign-in and account settings" id="accountFrame" src="about:blank"></iframe></section></dialog><dialog id="leaderboardDialog" aria-labelledby="leaderboardTitle"><div class="board-header"><h2 id="leaderboardTitle">leaderboard</h2><button type="button" id="leaderboardClose" aria-label="Close leaderboard">✕ Close</button></div><iframe title="Leaderboard rankings" id="leaderboardFrame" src="about:blank" style="width:100%;height:min(65vh,600px);border:0;background:transparent"></iframe></dialog><footer class="fine" id="schedule" hidden>Regular streams: Monday and Friday, 10 PM Atlantic. Additional weekday stream when possible.</footer></main><script>
-window.addEventListener('message',event=>{
- if(event.origin!==location.origin||![document.getElementById('secretsFrame').contentWindow,document.getElementById('accountFrame').contentWindow].includes(event.source)||!['aepuns-secrets-height','aepuns-secrets-signin'].includes(event.data?.type))return;
- if(event.data.type==='aepuns-secrets-signin'){openSettings();return}
- const height=Number(event.data.height);
- if(Number.isFinite(height)&&height>0&&height<3000)(event.source===accountFrame.contentWindow?accountFrame:document.getElementById('secretsFrame')).style.height=(height+8)+'px';
-});
-window.addEventListener('message',event=>{
- if(event.origin!==location.origin||event.source!==document.getElementById('accountFrame').contentWindow||event.data?.type!=='aepuns-account-signed-in')return;
- document.getElementById('secretsFrame').contentWindow?.postMessage({type:'aepuns-check-login'},location.origin);
- settingsDialog.close();
-});
+#claim-form{display:flex;gap:10px;flex-wrap:wrap}#guess{flex:1;min-width:145px;background:var(--button);color:var(--text);border:1px solid var(--border);border-radius:7px;padding:12px;font:inherit}#claim-form #submit{background:var(--accent);color:var(--accent-text)}#status,#account-message,#board-status{min-height:1.4em;color:var(--muted)}#account-panel[hidden],#signed-in[hidden],#signed-out[hidden]{display:none}#account-panel form{display:flex;flex-wrap:wrap;gap:8px}#account-panel input{flex:1;min-width:130px;padding:10px;border:1px solid var(--border);border-radius:7px;background:var(--button);color:var(--text)}#account-panel .note{font-size:.85rem}#account-panel h2{font-size:17px}#google-button{min-height:44px}#leaderboard .tabs{display:flex;gap:8px;margin:12px 0}#leaderboard table{border-collapse:collapse;width:100%;font-size:.9rem}#leaderboard td,#leaderboard th{padding:10px 4px;border-bottom:1px solid var(--border);text-align:left}#leaderboard td:last-child,#leaderboard th:last-child{text-align:right}#rankings{overflow-x:auto}#leaderboardDialog{width:min(95vw,650px)}
+</style></head><body><main><div class="topline"><a href="/">← Home</a><button type="button" class="theme-toggle" id="themeToggle" aria-haspopup="dialog">⚙ Settings</button></div><h1>stream</h1><section class="panel"><h2>send a reaction</h2><p id="availability" class="status">Loading reactions…</p><div id="tags" class="tags"></div><div id="gallery" class="gallery"></div><p id="sent" class="status" role="status" aria-live="polite"></p><div class="cooldown-track" aria-hidden="true"><div id="cooldownProgress"></div></div></section><section class="panel"><h2>secrets</h2><form id="claim-form">
+<input id="guess" aria-label="Secret word" autocomplete="off" maxlength="100" required placeholder="enter word">
+<button id="submit" type="submit">submit</button>
+</form>
+<p id="status" role="status" aria-live="polite"></p>
+<button type="button" id="leaderboardOpen" aria-haspopup="dialog">🏆 View leaderboard</button></section><dialog id="settingsDialog" aria-labelledby="settingsTitle"><div class="settings-head"><h2 id="settingsTitle">Settings</h2><button id="settingsClose" type="button">✕ Close</button></div><section class="settings-group"><h3>Appearance</h3><p>Display mode</p><div id="modeChoices" class="settings-options"></div><p>Accent color</p><div id="colorChoices" class="settings-options"></div></section><section class="settings-group"><h3>Account</h3><div id="account">checking sign-in…</div>
+
+<section id="account-panel" aria-label="My account">
+<h2>my account</h2>
+<div id="signed-out" hidden>
+<p class="note">Sign in with Google to redeem words and save points.</p>
+<div id="google-button"></div>
+<p id="google-message" class="note"></p>
+</div>
+<div id="signed-in" hidden>
+<p class="note">signed in as <strong id="current-username"></strong></p>
+<p id="cooldown" class="note"></p>
+<form id="username-form" autocomplete="off">
+<input id="username" aria-label="New username" placeholder="new username" required>
+<button id="username-save" type="submit">save username</button>
+</form>
+<p class="note">Names can include spaces, symbols and emoji. Invisible characters and stacked/glitch text aren't allowed. You can change your username once every 30 days.</p>
+<div class="account-actions"><button type="button" id="signout">sign out</button></div>
+</div>
+<p id="account-message" role="status" aria-live="polite"></p>
+</section>
+</section></dialog><dialog id="leaderboardDialog" aria-labelledby="leaderboardTitle"><div class="board-header"><h2 id="leaderboardTitle">leaderboard</h2><button type="button" id="leaderboardClose" aria-label="Close leaderboard">✕ Close</button></div><section id="leaderboard" aria-labelledby="leaderboard-title">
+<h2 id="leaderboard-title">leaderboard</h2>
+<div class="tabs" role="tablist" aria-label="Leaderboard rankings">
+<button type="button" id="total-tab" role="tab" aria-selected="true" aria-controls="rankings">total points</button>
+<button type="button" id="live-tab" role="tab" aria-selected="false" aria-controls="rankings">live points</button>
+</div>
+<div id="rankings" role="tabpanel" aria-labelledby="total-tab" class="table-wrap">
+<table><thead><tr><th scope="col">#</th><th scope="col">username</th><th scope="col" id="score-heading">total points</th></tr></thead><tbody id="rank-rows"></tbody></table>
+</div>
+<p id="board-status" role="status">loading rankings…</p>
+<button type="button" id="refresh">refresh rankings</button>
+</section>
+</dialog><footer class="fine" id="schedule" hidden>Regular streams: Monday and Friday, 10 PM Atlantic. Additional weekday stream when possible.</footer></main><script>
 const boardDialog=document.getElementById('leaderboardDialog');
-const boardFrame=document.getElementById('leaderboardFrame');
 document.getElementById('leaderboardOpen').addEventListener('click',()=>{
- if(boardFrame.getAttribute('src')==='about:blank')boardFrame.src='/secrets/?view=board';
  boardDialog.showModal();
 });
 document.getElementById('leaderboardClose').addEventListener('click',()=>boardDialog.close());
 boardDialog.addEventListener('click',e=>{if(e.target===boardDialog)boardDialog.close()});
-boardFrame.addEventListener('load',()=>notifyFrames());
 const API='https://api.aepuns.ca';
 const tags=document.getElementById('tags'),gallery=document.getElementById('gallery'),available=document.getElementById('availability'),sent=document.getElementById('sent');
 const timerBar=document.getElementById('cooldownProgress');
@@ -77,7 +102,6 @@ let cooldownLength=Number(localStorage.getItem(cooldownKey+'-duration')||0);
 let renderedSignature='';
 const themeToggle=document.getElementById('themeToggle');
 const settingsDialog=document.getElementById('settingsDialog');
-const accountFrame=document.getElementById('accountFrame');
 const systemTheme=matchMedia('(prefers-color-scheme: dark)');
 const modes=['auto','light','dark'];
 const accents={red:'#c73543',orange:'#bd6416',yellow:'#977000',green:'#247d47',blue:'#3266c7',purple:'#7f46db',white:'#ffffff',black:'#000000'};
@@ -87,15 +111,6 @@ let themeChoice=localStorage.getItem('aepuns-stream-theme')||'auto';
 if(!modes.includes(themeChoice))themeChoice='auto';
 let accentChoice=localStorage.getItem('aepuns-stream-accent')||'purple';
 if(!Object.hasOwn(accents,accentChoice))accentChoice='purple';
-function themeMessage(){
- const root=document.documentElement;
- return {type:'aepuns-theme',theme:root.dataset.theme,accent:root.style.getPropertyValue('--accent'),accentText:root.style.getPropertyValue('--accent-text'),themeColor:root.style.getPropertyValue('--theme-color')};
-}
-function notifyFrames(){
- for(const frame of [document.getElementById('secretsFrame'),boardFrame,accountFrame]){
-  if(frame?.contentWindow)frame.contentWindow.postMessage(themeMessage(),location.origin);
- }
-}
 function setTheme(){
  const resolved=themeChoice==='auto'?(systemTheme.matches?'dark':'light'):themeChoice;
  const accent=(resolved==='dark'?darkAccents:lightAccents)[accentChoice];
@@ -107,7 +122,6 @@ function setTheme(){
  document.documentElement.style.setProperty('--accent-text',text);
  document.querySelectorAll('#modeChoices button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===themeChoice)));
  document.querySelectorAll('#colorChoices button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.color===accentChoice)));
- notifyFrames();
 }
 for(const mode of modes){
  const b=document.createElement('button');b.type='button';b.dataset.mode=mode;b.textContent=mode[0].toUpperCase()+mode.slice(1);
@@ -122,13 +136,11 @@ for(const [name,color] of Object.entries(accents)){
  document.getElementById('colorChoices').append(b);
 }
 function openSettings(){
- if(accountFrame.getAttribute('src')==='about:blank')accountFrame.src='/secrets/?view=account';
  settingsDialog.showModal();
 }
 themeToggle.onclick=openSettings;
 document.getElementById('settingsClose').onclick=()=>settingsDialog.close();
 settingsDialog.addEventListener('click',e=>{if(e.target===settingsDialog)settingsDialog.close()});
-accountFrame.addEventListener('load',notifyFrames);
 systemTheme.addEventListener?.('change',()=>{if(themeChoice==='auto')setTheme()});
 setTheme();
 function setCooldown(seconds){cooldownLength=Math.max(0,Number(seconds)||0)*1000;cooldownEnd=Date.now()+cooldownLength;localStorage.setItem(cooldownKey,String(cooldownEnd));localStorage.setItem(cooldownKey+'-duration',String(cooldownLength));updateButtons()}
@@ -162,6 +174,204 @@ async function refresh(){try{const response=await fetch(API+'/reactions/config',
   if(!newer.tags.includes(selected)&&selected!=='All')selected='All';
   if(signature!==renderedSignature){renderedSignature=signature;view()}else updateButtons();
  }catch(e){available.textContent=e.message;data.enabled=false;updateButtons()}}
+/* Native Secrets controls, using existing Cloudflare endpoints. */
+
+const accountPanel = document.getElementById('account-panel');
+const signedOut = document.getElementById('signed-out');
+const signedIn = document.getElementById('signed-in');
+const accountMessage = document.getElementById('account-message');
+let googleInitialized = false;
+let signedInUser = false;
+let googleClientId = '';
+const invalidUsername = /[\p{Cc}\p{Cf}\p{Cs}\p{M}\p{Zl}\p{Zp}]/u;
+
+const status = document.getElementById('status');
+const account = document.getElementById('account');
+const submit = document.getElementById('submit');
+const rankRows = document.getElementById('rank-rows');
+const boardStatus = document.getElementById('board-status');
+const totalTab = document.getElementById('total-tab');
+const liveTab = document.getElementById('live-tab');
+let leaderboard = [];
+let mode = 'total';
+let pendingRedemption='';
+let resumingRedemption=false;
+
+async function getJSON(path, options = {}) {
+  const response = await fetch(API + path, { credentials: 'include', cache: 'no-store', ...options });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || 'request failed');
+  return data;
+}
+function openAccount() {
+  accountPanel.hidden = false;
+  
+  if (!signedInUser) renderGoogleButton();
+}
+function renderGoogleButton() {
+  if (signedInUser || googleInitialized || !googleClientId || !window.google?.accounts?.id) return;
+  google.accounts.id.initialize({ client_id: googleClientId, callback: googleCredential });
+  google.accounts.id.renderButton(document.getElementById('google-button'), {
+    type: 'standard', theme: 'outline', size: 'large', text: 'signin_with', shape: 'rectangular'
+  });
+  googleInitialized = true;
+}
+async function googleCredential(response) {
+  accountMessage.textContent = 'signing in…';
+  try {
+    await getJSON('/auth/google', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ credential: response.credential })
+    });
+    await checkAccount();
+    if (!signedInUser) throw new Error('Google accepted the login, but your browser did not retain the session cookie. This can happen when third-party cookies are blocked.');
+    accountMessage.textContent = 'signed in successfully!';
+    if(pendingRedemption){const word=pendingRedemption;pendingRedemption="";await redeemWord(word)}
+  } catch (error) { accountMessage.textContent = 'sign-in failed: ' + error.message; }
+}
+async function checkAccount() {
+  try {
+    const data = await getJSON('/profile/me');
+    signedInUser = !!data.authenticated;
+    signedIn.hidden = !signedInUser;
+    signedOut.hidden = signedInUser;
+    if (signedInUser) {
+      account.textContent = 'signed in as ' + data.username;
+      document.getElementById('current-username').textContent = data.username;
+      const cooldown = document.getElementById('cooldown');
+      const save = document.getElementById('username-save');
+      const field = document.getElementById('username');
+      const date = data.next_username_change_at ? new Date(data.next_username_change_at * 1000) : null;
+      save.disabled = !data.can_change_username;
+      field.disabled = !data.can_change_username;
+      cooldown.textContent = data.can_change_username ? 'you can change your username now.' :
+        'next username change: ' + date.toLocaleString(undefined, { dateStyle: 'long', timeStyle: 'short' });
+      if (data.needs_username) {
+        openAccount();
+        accountMessage.textContent = 'welcome! choose a username for the leaderboard.';
+      }
+    } else {
+      account.textContent = 'sign in with Google to redeem words';
+      renderGoogleButton();
+    }
+    
+    if(signedInUser&&pendingRedemption&&!resumingRedemption){
+      const word=pendingRedemption;pendingRedemption='';resumingRedemption=true;
+      try{await redeemWord(word)}finally{resumingRedemption=false}
+    }
+  } catch (error) {
+    signedInUser = false;
+    signedIn.hidden = true;
+    signedOut.hidden = false;
+    account.textContent = 'could not check sign-in status';
+    console.warn('Secrets session check:', error);
+  }
+}
+async function loadGoogleConfig() {
+  try {
+    const data = await getJSON('/auth/config');
+    googleClientId = data.google_client_id || '';
+    if (!googleClientId) throw new Error('Google sign-in is not configured');
+    renderGoogleButton();
+  } catch (error) { document.getElementById('google-message').textContent = error.message; }
+}
+document.getElementById('username-form').addEventListener('submit', async event => {
+  event.preventDefault();
+  const field = document.getElementById('username');
+  const username = field.value.trim().normalize('NFC');
+  if (!username || invalidUsername.test(username) || new TextEncoder().encode(username).length > 1024) {
+    accountMessage.textContent = 'please use a name without invisible characters or stacked/glitch text.';
+    return;
+  }
+  const button = document.getElementById('username-save');
+  button.disabled = true;
+  accountMessage.textContent = 'saving username…';
+  try {
+    await getJSON('/profile/username', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username })
+    });
+    field.value = '';
+    accountMessage.textContent = 'username saved! next change in 30 days.';
+    await checkAccount();
+    await loadLeaderboard();
+  } catch (error) { accountMessage.textContent = error.message; button.disabled = false; }
+});
+document.getElementById('signout').addEventListener('click', async () => {
+  try {
+    await getJSON('/auth/logout', { method: 'POST' });
+    signedInUser = false;
+    googleInitialized = false;
+    document.getElementById('google-button').replaceChildren();
+    if (window.google?.accounts?.id) google.accounts.id.disableAutoSelect();
+    await checkAccount();
+    accountMessage.textContent = 'signed out.';
+  } catch (error) { accountMessage.textContent = error.message; }
+});
+function renderLeaderboard() {
+  totalTab.setAttribute('aria-selected', String(mode === 'total'));
+  liveTab.setAttribute('aria-selected', String(mode === 'live'));
+  document.getElementById('rankings').setAttribute('aria-labelledby', mode === 'total' ? 'total-tab' : 'live-tab');
+  document.getElementById('score-heading').textContent = mode === 'total' ? 'total points' : 'live points';
+  const sorted = [...leaderboard].sort((a, b) => {
+    const aScore = mode === 'total' ? a.total_points : a.live_points;
+    const bScore = mode === 'total' ? b.total_points : b.live_points;
+    return bScore - aScore || b.total_points - a.total_points || a.username.localeCompare(b.username);
+  });
+  rankRows.replaceChildren();
+  sorted.forEach((entry, index) => {
+    const tr = document.createElement('tr');
+    const rank = document.createElement('td');
+    const name = document.createElement('td');
+    const score = document.createElement('td');
+    rank.textContent = String(index + 1);
+    name.textContent = entry.username;
+    score.textContent = String(mode === 'total' ? entry.total_points : entry.live_points);
+    tr.append(rank, name, score);
+    rankRows.append(tr);
+  });
+  boardStatus.textContent = sorted.length ? '' : 'no rankings yet.';
+}
+async function loadLeaderboard() {
+  boardStatus.textContent = 'loading rankings…';
+  try {
+    const data = await getJSON('/leaderboard');
+    leaderboard = data.leaderboard || [];
+    renderLeaderboard();
+  } catch (error) {
+    boardStatus.textContent = 'could not load rankings: ' + error.message;
+  }
+}
+totalTab.addEventListener('click', () => { mode = 'total'; renderLeaderboard(); });
+liveTab.addEventListener('click', () => { mode = 'live'; renderLeaderboard(); });
+document.getElementById('refresh').addEventListener('click', loadLeaderboard);
+async function redeemWord(word){
+  submit.disabled=true;
+  status.textContent='checking word…';
+  try{
+    const data=await getJSON('/secrets/redeem',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({word})});
+    pendingRedemption='';
+    status.textContent='+'+data.points+' '+data.score_type+' points for '+data.stream_title+'!';
+    document.getElementById('guess').value='';
+    await loadLeaderboard();
+  }catch(error){
+    if(/sign in|unauthoriz|authenticat/i.test(error.message)){
+      pendingRedemption=word;
+      status.textContent='Sign in with Google to redeem this word.';
+      openSettings();
+    }else{
+      status.textContent=error.message;
+      if(/sign in/i.test(error.message)){await checkAccount();openAccount()}
+    }
+  }finally{submit.disabled=false}
+}
+document.getElementById('claim-form').addEventListener('submit',event=>{
+ event.preventDefault();
+ const word=document.getElementById('guess').value.trim();
+ if(word)redeemWord(word);
+});
+
+window.addEventListener('load',renderGoogleButton);
+checkAccount();loadGoogleConfig();loadLeaderboard();
 refresh();setInterval(refresh,10000);setInterval(updateButtons,100);
 async function refreshScheduleVisibility(){
  try{
@@ -177,6 +387,9 @@ async function refreshScheduleVisibility(){
 refreshScheduleVisibility();
 setInterval(refreshScheduleVisibility,30000);
 // Display each recurring time in the visitor's time zone based on the upcoming Halifax weekday.
+const now=new Date(),fmt=new Intl.DateTimeFormat('en-US',{timeZone:'America/Halifax',year:'numeric',month:'numeric',day:'numeric',weekday:'short'}),parts=Object.fromEntries(fmt.formatToParts(now).map(p=>[p.type,p.value]));
+const base=new Date(Date.UTC(+parts.year,+parts.month-1,+parts.day));let times=[];for(const day of [1,5]){let date=new Date(base);let delta=(day-date.getUTCDay()+7)%7;date.setUTCDate(date.getUTCDate()+delta);const test=new Date(Date.UTC(date.getUTCFullYear(),date.getUTCMonth(),date.getUTCDate(),22));const tztime=new Intl.DateTimeFormat('en-US',{timeZone:'America/Halifax',hour:'numeric',hourCycle:'h23'}).format(test);const offset=Number(tztime)-22;let utc=new Date(test.getTime()-offset*3600000);times.push(new Intl.DateTimeFormat(undefined,{weekday:'long',hour:'numeric',minute:'2-digit',timeZone:Intl.DateTimeFormat().resolvedOptions().timeZone}).format(utc))}document.getElementById('schedule').textContent='Regular streams (your local time): '+times.join(' · ')+' · Extra weekday stream when possible.';
+</script>ime zone based on the upcoming Halifax weekday.
 const now=new Date(),fmt=new Intl.DateTimeFormat('en-US',{timeZone:'America/Halifax',year:'numeric',month:'numeric',day:'numeric',weekday:'short'}),parts=Object.fromEntries(fmt.formatToParts(now).map(p=>[p.type,p.value]));
 const base=new Date(Date.UTC(+parts.year,+parts.month-1,+parts.day));let times=[];for(const day of [1,5]){let date=new Date(base);let delta=(day-date.getUTCDay()+7)%7;date.setUTCDate(date.getUTCDate()+delta);const test=new Date(Date.UTC(date.getUTCFullYear(),date.getUTCMonth(),date.getUTCDate(),22));const tztime=new Intl.DateTimeFormat('en-US',{timeZone:'America/Halifax',hour:'numeric',hourCycle:'h23'}).format(test);const offset=Number(tztime)-22;let utc=new Date(test.getTime()-offset*3600000);times.push(new Intl.DateTimeFormat(undefined,{weekday:'long',hour:'numeric',minute:'2-digit',timeZone:Intl.DateTimeFormat().resolvedOptions().timeZone}).format(utc))}document.getElementById('schedule').textContent='Regular streams (your local time): '+times.join(' · ')+' · Extra weekday stream when possible.';
 </script></body></html>
