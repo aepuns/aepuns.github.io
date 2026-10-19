@@ -23,17 +23,17 @@ h1{font-size:clamp(2rem,6vw,2.75rem);margin:0 0 10px}p{line-height:1.55}.muted{c
 <h1>level requests</h1>
 <section class="card" aria-label="Level request form">
 <form id="level-form">
-<label for="level-id">Geometry Dash level ID</label>
+<label for="level-id">Level ID</label>
 <input id="level-id" name="level_id" type="text" inputmode="numeric" pattern="[0-9]+" maxlength="12" placeholder="e.g. 123456789" autocomplete="off" required>
 <p class="hint"><a href="https://youtu.be/9guPi4djj00" target="_blank" rel="noopener noreferrer">Where to find your ID ↗</a></p>
-<button id="lookup-button" type="button">Look up level</button>
-<p id="lookup-status" role="status" aria-live="polite" class="hint">Enter a level ID to see its details.</p>
-<p class="hint" id="lookup-fallback" hidden><a id="lookup-fallback-link" href="https://gdbrowser.com" target="_blank" rel="noopener noreferrer">View level on GDBrowser ↗</a></p>
-<section id="level-preview" class="level-preview" hidden aria-label="Level details"><h3 id="preview-name"></h3><p id="preview-creator"></p><dl><div><dt>Difficulty</dt><dd id="preview-difficulty"></dd></div><div><dt>Length</dt><dd id="preview-length"></dd></div><div><dt>Stars</dt><dd id="preview-stars"></dd></div><div><dt>Downloads</dt><dd id="preview-downloads"></dd></div><div><dt>Likes</dt><dd id="preview-likes"></dd></div></dl><a id="preview-link" target="_blank" rel="noopener noreferrer">Open level in GDBrowser ↗</a></section>
 <label for="name">Your name (optional)</label>
 <input id="name" name="name" maxlength="40" placeholder="What should I call you?" disabled>
 <label for="note">Note (optional)</label>
 <textarea id="note" name="note" maxlength="300" placeholder="Anything I should know about this level?" disabled></textarea>
+<button id="lookup-button" type="button">Look up level</button>
+<p id="lookup-status" role="status" aria-live="polite" class="hint">Enter a level ID to see its details.</p>
+<p class="hint" id="lookup-fallback" hidden><a id="lookup-fallback-link" href="https://gdbrowser.com" target="_blank" rel="noopener noreferrer">View level on GDBrowser ↗</a></p>
+<section id="level-preview" class="level-preview" hidden aria-label="Level details"><h3 id="preview-name"></h3><p id="preview-creator"></p><dl><div><dt>Difficulty</dt><dd id="preview-difficulty"></dd></div><div><dt>Length</dt><dd id="preview-length"></dd></div><div><dt>Stars</dt><dd id="preview-stars"></dd></div><div><dt>Downloads</dt><dd id="preview-downloads"></dd></div><div><dt>Likes</dt><dd id="preview-likes"></dd></div></dl><a id="preview-link" target="_blank" rel="noopener noreferrer">Open level in GDBrowser ↗</a></section>
 <button type="submit" disabled aria-disabled="true">Requests closed</button>
 </form>
 </section>
