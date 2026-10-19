@@ -56,7 +56,7 @@
         #additional-pages-tray { position:fixed; bottom:0; left:0; right:0; z-index:1000; pointer-events:none; font-family:Roboto,Arial,sans-serif; --tray-fg:#111; --tray-bg:rgba(255,255,255,.84); }
         #tray-toggle { position:absolute; bottom:8px; left:50%; transform:translateX(-50%); width:52px; height:34px; border:0; padding:0; background:transparent; color:var(--tray-fg); opacity:.66; cursor:pointer; pointer-events:auto; transition:transform .25s ease,opacity .25s ease,bottom .3s ease; font:700 25px Roboto,Arial,sans-serif; }
 #tray-toggle .tray-arrow { display:block; margin:auto; width:0; height:0; border-left:19px solid transparent; border-right:19px solid transparent; border-bottom:10px solid currentColor; transition:transform .25s ease; }
-        #additional-pages-tray.is-open #tray-toggle .tray-arrow { transform:rotate(180deg); }
+        #additional-pages-tray.is-open #tray-toggle .tray-arrow { transform:scaleY(-1); }
         #tray-toggle:hover,#tray-toggle:focus-visible { transform:translateX(-50%) scale(1.15); opacity:1; }
         #tray-toggle:focus-visible { outline:2px solid currentColor; outline-offset:2px; }
         #tray-panel { display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:10px; min-height:65px; padding:18px 18px 21px; background:var(--tray-bg); color:var(--tray-fg); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border-top:1px solid rgba(128,128,128,.2); transform:translateY(100%); transition:transform .35s ease; pointer-events:none; }
@@ -198,7 +198,7 @@
         <div id="tray-panel" inert></div>
     </nav>
 
-    <p id="site-version">v2.0</p>
+    <p id="site-version">v2.2</p>
 
 <script src="version.js"></script>
 <script>
