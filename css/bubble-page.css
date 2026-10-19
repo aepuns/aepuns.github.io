@@ -92,3 +92,6 @@ body[data-bubble="projects-art"] .project-description {
 body[data-bubble="projects-art"] .project-entry-header { margin: 0 0 15px; }
 body[data-bubble="projects-art"] .project-entry h2 { margin: 0; font-size: 1.5rem; }
 body[data-bubble="projects-art"] .project-description { white-space: pre-wrap; }
+
+/* Reserve room below the animated Projects/Art tab underline for any first card. */
+body[data-bubble="projects-art"] .projects-art-content { margin-top: 40px; }
