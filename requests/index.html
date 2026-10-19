@@ -25,11 +25,11 @@ h1{font-size:clamp(2rem,6vw,2.75rem);margin:0 0 10px}p{line-height:1.55}.muted{c
 [hidden]{display:none!important}
 .queue-heading{font-size:.95rem;font-weight:700;margin:20px 0 12px;text-transform:lowercase}
 .queue-divider{border:0;border-top:1px solid var(--border);width:86%;margin:22px auto}
-.queue-face{width:78px;height:78px;flex:none;object-fit:contain}
+.queue-face-wrap{width:156px;height:156px;flex:none;display:flex;align-items:center;justify-content:center}.queue-face{width:100%;height:100%;object-fit:contain;display:block}
 .queue-position{margin-left:auto;color:var(--muted);font-size:.8rem;white-space:nowrap}
 .queue-item{min-height:94px}
 .queue-details{flex:1}
-@media(max-width:430px){.nav-option{font-size:.92rem;padding:17px 5px}.nav-option[aria-selected="true"]{padding:16px 4px}.queue-face{width:66px;height:66px}}
+@media(max-width:430px){.nav-option{font-size:.92rem;padding:17px 5px}.nav-option[aria-selected="true"]{padding:16px 4px}.queue-face-wrap{width:132px;height:132px}}
 </style>
 </head>
 <body><main>
@@ -60,7 +60,7 @@ h1{font-size:clamp(2rem,6vw,2.75rem);margin:0 0 10px}p{line-height:1.55}.muted{c
 <p class="queue-demo">Demo only. These are example requests, not a live queue.</p>
 <h3 class="queue-heading">now playing</h3>
 <div class="queue-item">
-<img class="queue-face" src="https://autonick.github.io/diff-faces/levels/none/hard/none/none.png" alt="Hard difficulty">
+<div class="queue-face-wrap"><img class="queue-face" src="https://autonick.github.io/diff-faces/levels/none/hard/none/none.png" alt="Hard difficulty"></div>
 <div class="queue-details"><strong id="queue-demo-title">Example Level</strong><small id="queue-demo-id">(123456789)</small><small>by example viewer</small><small>Hard · now playing</small></div>
 <span class="queue-position">#1</span>
 </div>
@@ -68,7 +68,7 @@ h1{font-size:clamp(2rem,6vw,2.75rem);margin:0 0 10px}p{line-height:1.55}.muted{c
 <h3 class="queue-heading">up next</h3>
 <div class="queue-list">
 <div class="queue-item">
-<img class="queue-face" src="https://autonick.github.io/diff-faces/levels/none/easyDemon/none/none.png" alt="Easy Demon difficulty">
+<div class="queue-face-wrap"><img class="queue-face" src="https://autonick.github.io/diff-faces/levels/none/easyDemon/none/none.png" alt="Easy Demon difficulty"></div>
 <div class="queue-details"><strong>Another Example Level</strong><small>(98765432)</small><small>by another viewer</small><small>Easy Demon · waiting</small></div>
 <span class="queue-position">#2</span>
 </div></div>
