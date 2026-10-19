@@ -9,7 +9,7 @@ function pathClear(path,duration,avoid){if(!avoid)return true;return active.ever
 })}
 function place(code){const art=items.find(x=>x.code===code&&x.enabled);if(!art)return true;if(active.length>=Math.max(1,cfg.maxOnScreen||8))return false;
  const w=stage.clientWidth,h=stage.clientHeight,sz=between(cfg.startSize,cfg.startSizeVariation,1,500),esz=between(cfg.endSize,cfg.endSizeVariation,1,500),duration=Math.max(.2,Number(cfg.duration)||3)*1000;
- let path;for(let i=0;i<30;i++){const x=(.12+Math.random()*.76)*w,y=h*.55,dx=(Number(cfg.drift)||0)+(Math.random()*2-1)*(Number(cfg.driftSpread)||0);const candidate={x:Math.max(sz/2,Math.min(w-sz/2,x)),y,dx:Math.max(-x+sz/2,Math.min(w-x-sz/2,dx)),size:sz};if(pathClear(candidate,duration,cfg.avoidOverlap)){path=candidate;break}}
+ let path;for(let i=0;i<30;i++){const halfSpread=Math.max(0,Math.min(w/2,Number(cfg.spawnSpread??250)||0));const x=w/2+(Math.random()*2-1)*halfSpread,y=h*.55,dx=(Number(cfg.drift)||0)+(Math.random()*2-1)*(Number(cfg.driftSpread)||0);const candidate={x:Math.max(sz/2,Math.min(w-sz/2,x)),y,dx:Math.max(-x+sz/2,Math.min(w-x-sz/2,dx)),size:sz};if(pathClear(candidate,duration,cfg.avoidOverlap)){path=candidate;break}}
  if(!path)return false;
  const node=new Image();node.className='reaction';node.src=art.image;node.style.width=sz+'px';node.style.height=sz+'px';node.style.left=(path.x-sz/2)+'px';node.style.top=(path.y-sz/2)+'px';stage.append(node);
  const sa=between(cfg.startOpacity,cfg.startOpacityVariation,0,100)/100,ea=between(cfg.endOpacity,cfg.endOpacityVariation,0,100)/100;const record={node,path,start:performance.now(),duration};active.push(record);
