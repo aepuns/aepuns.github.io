@@ -14,7 +14,7 @@ body{background:var(--page);color:var(--text);min-height:100vh}.panel{background
 .reaction button .remaining{position:absolute;inset:0;display:grid;place-items:center;z-index:2;font-size:13px;font-weight:750;color:#fff;text-shadow:0 1px 3px #111;pointer-events:none}
 .cooldown-track{height:6px;background:var(--border);border-radius:9px;overflow:hidden;max-width:360px;margin:8px 0}.cooldown-track>div{height:100%;width:0;background:var(--active);transition:width .1s linear}
 @media(prefers-reduced-motion:reduce){.reaction .shade,.cooldown-track>div{transition:none}}
-</style></head><body><main><div class="topline"><a href="/">← Home</a><button type="button" class="theme-toggle" id="themeToggle" aria-label="Toggle light and dark theme">Theme: Auto</button></div><h1>stream</h1><div class="cols"><div class="offline" aria-label="Stream offline">OFFLINE</div><div class="offline chat" aria-label="Combined chat offline">OFFLINE</div></div><p class="status">Live player and merged read-only chat will activate after YouTube/Twitch authentication is configured.</p><section class="panel"><h2>send a reaction</h2><p id="availability" class="status">Loading reactions…</p><div id="tags" class="tags"></div><div id="gallery" class="gallery"></div><p id="sent" class="status" role="status" aria-live="polite"></p><div class="cooldown-track" aria-hidden="true"><div id="cooldownProgress"></div></div></section><section class="panel"><h2>secrets</h2><p>Hear anything suspicious? <a href="/secrets/">Redeem a secret word here.</a></p></section><footer class="fine" id="schedule">Regular streams: Monday and Friday, 10 PM Atlantic. Additional weekday stream when possible.</footer></main><script>
+</style></head><body><main><div class="topline"><a href="/">← Home</a><button type="button" class="theme-toggle" id="themeToggle" aria-label="Toggle light and dark theme">Theme: Auto</button></div><h1>stream</h1><div class="cols"><div class="offline" aria-label="Stream offline">OFFLINE</div><div class="offline chat" aria-label="Combined chat offline">OFFLINE</div></div><p class="status">Live player and merged read-only chat will activate after YouTube/Twitch authentication is configured.</p><section class="panel"><h2>send a reaction</h2><p id="availability" class="status">Loading reactions…</p><div id="tags" class="tags"></div><div id="gallery" class="gallery"></div><p id="sent" class="status" role="status" aria-live="polite"></p><div class="cooldown-track" aria-hidden="true"><div id="cooldownProgress"></div></div></section><section class="panel"><h2>secrets</h2><iframe title="Secrets and leaderboard" id="secretsFrame" src="/secrets/" onload="this.contentWindow.postMessage({type:'aepuns-theme',theme:document.documentElement.dataset.theme},location.origin)" style="width:100%;height:740px;border:0;background:transparent" loading="lazy"></iframe></section><footer class="fine" id="schedule">Regular streams: Monday and Friday, 10 PM Atlantic. Additional weekday stream when possible.</footer></main><script>
 const API='https://aepuns-secrets-api.sheav06.workers.dev';
 const tags=document.getElementById('tags'),gallery=document.getElementById('gallery'),available=document.getElementById('availability'),sent=document.getElementById('sent');
 const timerBar=document.getElementById('cooldownProgress');
@@ -26,23 +26,22 @@ let renderedSignature='';
 const themeToggle=document.getElementById('themeToggle');
 const systemTheme=matchMedia('(prefers-color-scheme: dark)');
 let themeChoice=localStorage.getItem('aepuns-stream-theme')||'auto';
-function setTheme(){document.documentElement.dataset.theme=themeChoice==='auto'?(systemTheme.matches?'dark':'light'):themeChoice;themeToggle.textContent='Theme: '+themeChoice[0].toUpperCase()+themeChoice.slice(1)}
+function setTheme(){document.documentElement.dataset.theme=themeChoice==='auto'?(systemTheme.matches?'dark':'light'):themeChoice;themeToggle.textContent='Theme: '+themeChoice[0].toUpperCase()+themeChoice.slice(1);document.getElementById('secretsFrame')?.contentWindow?.postMessage({type:'aepuns-theme',theme:document.documentElement.dataset.theme},location.origin)}
 themeToggle.onclick=()=>{themeChoice=themeChoice==='auto'?'dark':themeChoice==='dark'?'light':'auto';localStorage.setItem('aepuns-stream-theme',themeChoice);setTheme()};
 systemTheme.addEventListener?.('change',()=>{if(themeChoice==='auto')setTheme()});setTheme();
 function setCooldown(seconds){cooldownLength=Math.max(0,Number(seconds)||0)*1000;cooldownEnd=Date.now()+cooldownLength;localStorage.setItem(cooldownKey,String(cooldownEnd));localStorage.setItem(cooldownKey+'-duration',String(cooldownLength));updateButtons()}
-function updateButtons(){const remaining=Math.max(0,cooldownEnd-Date.now());const offline=!data.live||!data.enabled;
+function updateButtons(){const remaining=Math.max(0,cooldownEnd-Date.now());const offline=!data.enabled;
   for(const b of gallery.querySelectorAll('button[data-reaction]')){
     b.disabled=offline||remaining>0||sending;b.classList.toggle('offline',offline);b.classList.toggle('waiting',!offline&&remaining>0);
     const shade=b.querySelector('.shade'),label=b.querySelector('.remaining');
     if(shade)shade.style.setProperty('--shade',offline?1:cooldownLength?remaining/cooldownLength:0);
     if(label)label.textContent=offline?'':remaining>0?Math.ceil(remaining/1000)+'s':'';
-    b.setAttribute('aria-label',offline?'Reactions unavailable while offline':remaining>0?'Ready in '+Math.ceil(remaining/1000)+' seconds':'Send reaction');
+    b.setAttribute('aria-label',offline?'Reactions disabled':remaining>0?'Ready in '+Math.ceil(remaining/1000)+' seconds':'Send reaction');
   }
   timerBar.style.width=!offline&&remaining>0&&cooldownLength?Math.min(100,100*(1-remaining/cooldownLength))+'%':'0%';
   if(!offline&&remaining>0)available.textContent='Cooldown: '+Math.ceil(remaining/1000)+' seconds until you can send another reaction.';
-  else if(!data.live)available.textContent='Aepuns is offline. Reactions are unavailable until the stream goes live.';
-  else if(!data.enabled)available.textContent='Reactions are currently disabled.';
-  else available.textContent='Choose a reaction to send to the stream.';
+  else if(!data.enabled)available.textContent='Reactions are disabled.';
+  else available.textContent='Reactions are enabled. They appear on stream only when the overlay is being broadcast.';
 }
 function view(){tags.replaceChildren();for(const name of ['All',...data.tags]){const button=document.createElement('button');button.textContent=name;button.className=name===selected?'active':'';button.onclick=()=>{selected=name;view()};tags.append(button)}
  gallery.replaceChildren();for(const r of data.items.filter(x=>selected==='All'||(x.tags||[]).includes(selected))){
