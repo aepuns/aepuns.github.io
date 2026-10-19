@@ -95,3 +95,7 @@ body[data-bubble="projects-art"] .project-description { white-space: pre-wrap; }
 
 /* Reserve room below the animated Projects/Art tab underline for any first card. */
 body[data-bubble="projects-art"] .projects-art-content { margin-top: 40px; }
+
+/* Dynamic Projects sections retain the full-width horizontal dividers. */
+body[data-bubble="projects-art"] .cloud-project-divider{display:block;width:100%;height:0;border-top:var(--section-rule) solid currentColor;}
+body[data-bubble="projects-art"] .cloud-project-section>.projects-section-heading{border-top:0;padding-top:24px;}
