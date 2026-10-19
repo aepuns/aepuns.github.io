@@ -42,7 +42,7 @@ body,html{background:var(--page)}
 :root[data-accent="white"][data-theme="light"],:root[data-accent="black"][data-theme="light"]{--page:#fff;--panel:#fff;--button:#fff;--border:#c3c3c3;--active:#f3f3f3;--active-text:#111}
 :root[data-accent="white"][data-theme="dark"],:root[data-accent="black"][data-theme="dark"]{--page:#090909;--panel:#161616;--button:#222;--border:#696969;--active:#333;--active-text:#fff}
 :root[data-accent="white"] button.active,:root[data-accent="black"] button.active{background:var(--active);color:var(--active-text)}
-#colorChoices{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:clamp(3px,1vw,10px);align-items:center;width:100%}
+#colorChoices{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(3px,1vw,10px);align-items:center;width:100%}
 #colorChoices .color-choice{min-width:0;width:100%;aspect-ratio:1;padding:3px;border:2px solid transparent;border-radius:50%;background:transparent;display:grid;place-items:center}
 #colorChoices .color-choice .dot{width:100%;height:100%;border-radius:50%;border:1px solid var(--border);background:var(--swatch)}
 #colorChoices .color-choice[aria-pressed="true"]{border-color:var(--text);box-shadow:0 0 0 2px var(--panel),0 0 0 3px var(--accent)}
