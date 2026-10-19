@@ -30,6 +30,13 @@ button.active{background:var(--accent);color:var(--accent-text)}
 .color-choice{min-width:82px;display:flex;align-items:center;justify-content:center;gap:7px}
 .color-choice .dot{width:15px;height:15px;border-radius:50%;background:var(--swatch);border:1px solid #777}
 #accountFrame{width:100%;height:280px;border:0;background:transparent}
+
+/* Apply the chosen hue to the entire interface, not only its buttons. */
+:root[data-theme]{--page:color-mix(in srgb,var(--theme-base) 88%,var(--theme-color));--panel:color-mix(in srgb,var(--theme-surface) 89%,var(--theme-color));--button:color-mix(in srgb,var(--theme-surface) 81%,var(--theme-color));--border:color-mix(in srgb,var(--theme-color) 38%,var(--theme-base));}
+:root[data-theme="light"]{--theme-base:#fff;--theme-surface:#fff}
+:root[data-theme="dark"]{--theme-base:#090909;--theme-surface:#202020}
+body,html{background:var(--page)}
+#settingsDialog,#leaderboardDialog{background:var(--panel);border-color:var(--border)}
 </style></head><body><main><div class="topline"><a href="/">← Home</a><button type="button" class="theme-toggle" id="themeToggle" aria-haspopup="dialog">⚙ Settings</button></div><h1>stream</h1><section class="panel"><h2>send a reaction</h2><p id="availability" class="status">Loading reactions…</p><div id="tags" class="tags"></div><div id="gallery" class="gallery"></div><p id="sent" class="status" role="status" aria-live="polite"></p><div class="cooldown-track" aria-hidden="true"><div id="cooldownProgress"></div></div></section><section class="panel"><h2>secrets</h2><iframe title="Enter a secret word and manage your account" id="secretsFrame" src="/secrets/?view=compact" onload="this.contentWindow.postMessage(themeMessage(),location.origin)" style="width:100%;height:270px;border:0;background:transparent" loading="lazy"></iframe><button type="button" id="leaderboardOpen" aria-haspopup="dialog">🏆 View leaderboard</button></section><dialog id="settingsDialog" aria-labelledby="settingsTitle"><div class="settings-head"><h2 id="settingsTitle">Settings</h2><button id="settingsClose" type="button">✕ Close</button></div><section class="settings-group"><h3>Appearance</h3><p>Display mode</p><div id="modeChoices" class="settings-options"></div><p>Accent color</p><div id="colorChoices" class="settings-options"></div></section><section class="settings-group"><h3>Account</h3><iframe title="Google sign-in and account settings" id="accountFrame" src="about:blank"></iframe></section></dialog><dialog id="leaderboardDialog" aria-labelledby="leaderboardTitle"><div class="board-header"><h2 id="leaderboardTitle">leaderboard</h2><button type="button" id="leaderboardClose" aria-label="Close leaderboard">✕ Close</button></div><iframe title="Leaderboard rankings" id="leaderboardFrame" src="about:blank" style="width:100%;height:min(65vh,600px);border:0;background:transparent"></iframe></dialog><footer class="fine" id="schedule" hidden>Regular streams: Monday and Friday, 10 PM Atlantic. Additional weekday stream when possible.</footer></main><script>
 window.addEventListener('message',event=>{
  if(event.origin!==location.origin||![document.getElementById('secretsFrame').contentWindow,document.getElementById('accountFrame').contentWindow].includes(event.source)||!['aepuns-secrets-height','aepuns-secrets-signin'].includes(event.data?.type))return;
@@ -73,7 +80,7 @@ let accentChoice=localStorage.getItem('aepuns-stream-accent')||'purple';
 if(!Object.hasOwn(accents,accentChoice))accentChoice='purple';
 function themeMessage(){
  const root=document.documentElement;
- return {type:'aepuns-theme',theme:root.dataset.theme,accent:root.style.getPropertyValue('--accent'),accentText:root.style.getPropertyValue('--accent-text')};
+ return {type:'aepuns-theme',theme:root.dataset.theme,accent:root.style.getPropertyValue('--accent'),accentText:root.style.getPropertyValue('--accent-text'),themeColor:root.style.getPropertyValue('--theme-color')};
 }
 function notifyFrames(){
  for(const frame of [document.getElementById('secretsFrame'),boardFrame,accountFrame]){
@@ -85,6 +92,7 @@ function setTheme(){
  const accent=(resolved==='dark'?darkAccents:lightAccents)[accentChoice];
  const text=resolved==='dark'?'#17111e':'#fff';
  document.documentElement.dataset.theme=resolved;
+ document.documentElement.style.setProperty('--theme-color',accents[accentChoice]);
  document.documentElement.style.setProperty('--accent',accent);
  document.documentElement.style.setProperty('--accent-text',text);
  document.querySelectorAll('#modeChoices button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===themeChoice)));
