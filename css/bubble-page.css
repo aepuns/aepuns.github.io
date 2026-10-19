@@ -73,19 +73,22 @@ body.is-leaving::after{opacity:1;}
 .project-section-divider{display:none;}
 img.emoji{display:inline-block!important;width:1em!important;height:1em!important;margin:0 .06em!important;vertical-align:-.12em!important;}
 
-/* Projects cards: theme-aware outlines on the public Projects & Art page. */
+/* Project cards match the actual Updates card design. */
 body[data-bubble="projects-art"] .project-entry {
+  position: relative;
   box-sizing: border-box;
-  border: 1px solid currentColor;
-  border-radius: 16px;
-  padding: clamp(18px, 3vw, 30px);
-  margin-block: 20px;
+  padding: 22px;
+  margin: 0 0 22px;
+  border: 2px solid currentColor;
+  border-radius: 8px;
   background: transparent;
+  text-align: left;
 }
 body[data-bubble="projects-art"] .project-entry-header,
 body[data-bubble="projects-art"] .project-description {
   background: transparent !important;
+  padding: 0;
 }
-body[data-bubble="projects-art"] .project-section > .project-entry:first-of-type {
-  border-top: 1px solid currentColor;
-}
+body[data-bubble="projects-art"] .project-entry-header { margin: 0 0 15px; }
+body[data-bubble="projects-art"] .project-entry h2 { margin: 0; font-size: 1.5rem; }
+body[data-bubble="projects-art"] .project-description { white-space: pre-wrap; }
