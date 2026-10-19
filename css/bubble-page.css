@@ -56,7 +56,7 @@ body.is-leaving::after{opacity:1;}
 .fanart-gallery img{display:block;width:100%;height:100%;object-fit:contain;}
 
 .project-entry{padding:34px 0;border-top:0;text-align:left;}
-.projects-art-panel > .project-entry:first-child{border-top:0;}
+/* First project uses the full card border; do not suppress its top edge. */
 .project-section > .project-entry{border-top:0;}
 .project-entry-header{margin:0 0 18px;}
 .project-entry-header,.project-description,.projects-section-heading{background:transparent!important;}
