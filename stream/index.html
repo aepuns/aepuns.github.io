@@ -111,7 +111,7 @@ if(!Object.hasOwn(accents,accentChoice))accentChoice='purple';
 function setTheme(){
  const resolved=themeChoice==='auto'?(systemTheme.matches?'dark':'light'):themeChoice;
  const accent=(resolved==='dark'?darkAccents:lightAccents)[accentChoice];
- const text=(accentChoice==='white'||accentChoice==='black')?(resolved==='dark'?'#fff':'#111'):(resolved==='dark'?'#17111e':'#fff');
+ const text=accentChoice==='black'?'#fff':accentChoice==='white'?'#111':(resolved==='dark'?'#17111e':'#fff');
  document.documentElement.dataset.theme=resolved;
  document.documentElement.dataset.accent=accentChoice;
  document.documentElement.style.setProperty('--theme-color',accents[accentChoice]);
