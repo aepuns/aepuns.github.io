@@ -28,7 +28,7 @@ function mediaNode(value,title){
 function category(x){
   const raw=String(x.section||x.category||x.group||x.project_status||x.stage||'').trim().toLowerCase();
   if(/complete|completed|done|finished|released|past/.test(raw))return 'complete';
-  if(/upcoming|planned|future|next|in.progress|active/.test(raw))return 'upcoming';
+  if(/upcoming|ongoing|planned|future|next|in.progress|active|working|development/.test(raw))return 'upcoming';
   return 'featured';
 }
 function entry(x){
@@ -44,7 +44,6 @@ function entry(x){
   return item;
 }
 function group(name,items){
-  if(!items.length)return null;
   const section=document.createElement('section');section.className='project-section';
   const heading=document.createElement('h2');heading.className='projects-section-heading';heading.textContent=name.toUpperCase();section.append(heading);
   for(const item of items)section.append(entry(item));
