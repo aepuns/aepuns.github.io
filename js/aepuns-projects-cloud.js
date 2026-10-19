@@ -26,10 +26,10 @@ function mediaNode(value,title){
   const link=document.createElement('a');link.href=parsed.href;link.target='_blank';link.rel='noopener noreferrer';link.textContent='View project';return link;
 }
 function category(x){
-  const raw=String(x.section||x.category||x.group||x.project_status||x.stage||'').trim().toLowerCase();
+  const raw=String(x.project_status||x.section||x.category||x.group||x.stage||x.status||'').trim().toLowerCase();
   if(/complete|completed|done|finished|released|past/.test(raw))return 'complete';
   if(/upcoming|ongoing|planned|future|next|in.progress|active|working|development/.test(raw))return 'upcoming';
-  return 'featured';
+  return 'upcoming';
 }
 function entry(x){
   const item=document.createElement('article');item.className='project-entry';
@@ -54,7 +54,7 @@ fetch(API+'/site/content?kind=projects',{cache:'no-store'})
  .then(r=>{if(!r.ok)throw Error('Projects API returned '+r.status);return r.json()})
  .then(data=>{
    if(!Array.isArray(data.items))throw Error('Unexpected Projects data');
-   const items=data.items.filter(x=>x&&x.status!=='Unpublished'&&x.published!==false);
+   const items=data.items.filter(x=>x&&String(x.status||'').toLowerCase()!=='unpublished'&&x.published!==false);
    if(!items.length)return; // Empty or unconfigured feed: preserve the existing page.
    items.sort((a,b)=>Number(a.sort_order??a.order??0)-Number(b.sort_order??b.order??0));
    const featured=[],upcoming=[],complete=[];
