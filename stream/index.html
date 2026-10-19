@@ -37,6 +37,11 @@ window.addEventListener('message',event=>{
  const height=Number(event.data.height);
  if(Number.isFinite(height)&&height>0&&height<3000)(event.source===accountFrame.contentWindow?accountFrame:document.getElementById('secretsFrame')).style.height=(height+8)+'px';
 });
+window.addEventListener('message',event=>{
+ if(event.origin!==location.origin||event.source!==document.getElementById('accountFrame').contentWindow||event.data?.type!=='aepuns-account-signed-in')return;
+ document.getElementById('secretsFrame').contentWindow?.postMessage({type:'aepuns-check-login'},location.origin);
+ settingsDialog.close();
+});
 const boardDialog=document.getElementById('leaderboardDialog');
 const boardFrame=document.getElementById('leaderboardFrame');
 document.getElementById('leaderboardOpen').addEventListener('click',()=>{
