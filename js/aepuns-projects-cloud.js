@@ -44,7 +44,8 @@ function entry(x){
   return item;
 }
 function group(name,items){
-  const section=document.createElement('section');section.className='project-section';
+  const section=document.createElement('section');section.className='project-section cloud-project-section';
+  const divider=document.createElement('div');divider.className='cloud-project-divider';divider.setAttribute('aria-hidden','true');section.append(divider);
   const heading=document.createElement('h2');heading.className='projects-section-heading';heading.textContent=name.toUpperCase();section.append(heading);
   for(const item of items)section.append(entry(item));
   return section;
