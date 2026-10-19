@@ -8,7 +8,7 @@ fetch(API+'/site/content?kind=about',{cache:'no-store'})
  const items=data.items.filter(x=>x&&x.published!==false&&String(x.status||'').toLowerCase()!=='unpublished');
  if(!items.length)return;
  // Control Center stores descending positions; display in reading order.
- items.sort((a,b)=>Number(b.sort_order??0)-Number(a.sort_order??0));
+ items.sort((a,b)=>{const footer=x=>String(x.title||x.name||x.slug||'').trim().toLowerCase()==='footer'||/^more later lol\s*:\)$/i.test(String(x.body||'').trim());if(footer(a)!==footer(b))return footer(a)?1:-1;return Number(b.sort_order??0)-Number(a.sort_order??0)});
  const fragment=document.createDocumentFragment();
  for(const x of items){
  const raw=x.body??x.text??x.content??x.description??'';
