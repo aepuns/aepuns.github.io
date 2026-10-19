@@ -17,12 +17,29 @@
 h1{font-size:clamp(2rem,6vw,2.75rem);margin:0 0 10px}p{line-height:1.55}.muted{color:var(--muted)}.card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:24px;margin-top:24px}.status{display:inline-flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid var(--border);border-radius:999px;font-size:.88rem;font-weight:700}.dot{height:9px;width:9px;background:#888;border-radius:50%}h2{font-size:1.25rem;margin:22px 0 8px}label{display:block;font-weight:700;margin:18px 0 8px}input,textarea{width:100%;min-height:45px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font:inherit;padding:12px}textarea{resize:vertical;min-height:100px}button{border:0;border-radius:8px;padding:12px 18px;background:var(--button);color:var(--button-text);font:inherit;font-weight:700;margin-top:18px}button:disabled{opacity:.45;cursor:not-allowed}.hint{font-size:.9rem;color:var(--muted);margin-top:7px}.notice{border-left:3px solid var(--border);padding-left:12px;margin-top:18px}.foot{text-align:center;font-size:.85rem;color:var(--muted);margin-top:34px}@media(max-width:430px){.card{padding:18px}}
 .level-preview{border:1px solid var(--border);border-radius:10px;padding:16px;margin-top:12px;background:var(--bg)}.level-preview h3{margin:0 0 4px;font-size:1.25rem}.level-preview p{margin:0 0 14px;color:var(--muted)}.level-preview dl{display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:12px;margin:0 0 16px}.level-preview dt{font-size:.83rem;color:var(--muted)}.level-preview dd{margin:3px 0 0;font-weight:700}.level-preview a{color:var(--text);text-underline-offset:3px}#lookup-button{cursor:pointer}#lookup-button:disabled{cursor:wait}
 .queue-list{display:grid;gap:10px;margin-top:14px}.queue-item{border:1px solid var(--border);border-radius:10px;padding:14px;background:var(--bg);display:flex;gap:14px;align-items:center}.queue-number{font-size:1.35rem;font-weight:700;min-width:24px}.queue-details{min-width:0}.queue-details strong{display:block;overflow-wrap:anywhere}.queue-details small{display:block;color:var(--muted);margin-top:5px}.queue-demo{font-size:.85rem;color:var(--muted);margin:3px 0 0}
+
+.nav-options{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:24px}
+.nav-option{margin:0;min-width:0;text-align:center;border:1px solid var(--border);border-radius:12px;background:var(--panel);color:var(--text);font-size:1rem;padding:22px 8px;cursor:pointer}
+.nav-option[aria-selected="true"]{border:2px solid var(--text);padding:21px 7px;background:var(--bg)}
+.nav-option:focus-visible{outline:2px solid var(--text);outline-offset:3px}
+[hidden]{display:none!important}
+.queue-heading{font-size:.95rem;font-weight:700;margin:20px 0 12px;text-transform:lowercase}
+.queue-divider{border:0;border-top:1px solid var(--border);width:86%;margin:22px auto}
+.queue-face{width:62px;height:62px;flex:none;object-fit:contain}
+.queue-position{margin-left:auto;color:var(--muted);font-size:.8rem;white-space:nowrap}
+.queue-item{min-height:94px}
+.queue-details{flex:1}
+@media(max-width:430px){.nav-option{font-size:.92rem;padding:17px 5px}.nav-option[aria-selected="true"]{padding:16px 4px}.queue-face{width:52px;height:52px}}
 </style>
 </head>
 <body><main>
 <div class="top"><a class="back" href="/">◀ Home</a><button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to dark mode">☾ Dark</button></div>
 <h1>level requests</h1>
-<section class="card" aria-label="Level request form">
+<div class="nav-options" role="tablist" aria-label="Level requests">
+<button class="nav-option" id="tab-request" role="tab" aria-controls="request-panel" aria-selected="true" type="button">request a level</button>
+<button class="nav-option" id="tab-queue" role="tab" aria-controls="queue-panel" aria-selected="false" type="button">view the queue</button>
+</div>
+<section class="card" id="request-panel" role="tabpanel" aria-labelledby="tab-request" aria-label="Level request form">
 <form id="level-form">
 <label for="level-id">level ID</label>
 <input id="level-id" name="level_id" type="text" inputmode="numeric" pattern="[0-9]+" maxlength="12" placeholder="e.g. 123456789" autocomplete="off" required>
@@ -38,10 +55,23 @@ h1{font-size:clamp(2rem,6vw,2.75rem);margin:0 0 10px}p{line-height:1.55}.muted{c
 <button type="submit" disabled aria-disabled="true">Requests closed</button>
 </form>
 </section>
-<section class="card" aria-labelledby="queue-title">
+<section class="card" id="queue-panel" role="tabpanel" aria-labelledby="tab-queue" hidden>
 <h2 id="queue-title" style="margin-top:0">queue preview</h2>
-<p class="queue-demo">Demo only. This is how a request could appear once the queue is connected. No requests are being collected.</p>
-<div class="queue-list"><div class="queue-item"><span class="queue-number">1</span><div class="queue-details"><strong id="queue-demo-title">Level ID: 123456789</strong><small id="queue-demo-by">Requested by viewer · Waiting</small></div></div></div>
+<p class="queue-demo">Demo only. These are example requests, not a live queue.</p>
+<h3 class="queue-heading">now playing</h3>
+<div class="queue-item">
+<img class="queue-face" src="https://autonick.github.io/diff-faces/levels/none/hard/none/none.png" alt="Hard difficulty">
+<div class="queue-details"><strong id="queue-demo-title">123456789</strong><small>by example viewer</small><small>Hard · now playing</small></div>
+<span class="queue-position">#1</span>
+</div>
+<hr class="queue-divider">
+<h3 class="queue-heading">up next</h3>
+<div class="queue-list">
+<div class="queue-item">
+<img class="queue-face" src="https://autonick.github.io/diff-faces/levels/none/easyDemon/none/none.png" alt="Easy Demon difficulty">
+<div class="queue-details"><strong>98765432</strong><small>by another viewer</small><small>Easy Demon · waiting</small></div>
+<span class="queue-position">#2</span>
+</div></div>
 </section>
 <p class="foot">aepuns.ca · Geometry Dash level requests</p>
 </main><script>
@@ -68,9 +98,16 @@ h1{font-size:clamp(2rem,6vw,2.75rem);margin:0 0 10px}p{line-height:1.55}.muted{c
 })();
 </script><script>
 (function(){
+ const tabs=[document.getElementById('tab-request'),document.getElementById('tab-queue')];
+ const panels=[document.getElementById('request-panel'),document.getElementById('queue-panel')];
+ function select(i){tabs.forEach((t,n)=>{t.setAttribute('aria-selected',String(i===n));panels[n].hidden=i!==n;});}
+ tabs.forEach((tab,i)=>tab.addEventListener('click',()=>select(i)));
+})();
+</script><script>
+(function(){
  const field=document.getElementById('level-id'), button=document.getElementById('lookup-button');
  const demoTitle=document.getElementById('queue-demo-title');
- field.addEventListener('input',()=>{const id=field.value.trim();demoTitle.textContent=/^\\d{1,12}$/.test(id)?'Level ID: '+id:'Level ID: 123456789';});
+ field.addEventListener('input',()=>{const id=field.value.trim();demoTitle.textContent=/^\d{1,12}$/.test(id)?id:'123456789';});
  const status=document.getElementById('lookup-status'),preview=document.getElementById('level-preview');
  const fallback=document.getElementById('lookup-fallback'),fallbackLink=document.getElementById('lookup-fallback-link');
  const view=(id,value)=>{document.getElementById(id).textContent=value??'Unknown'};
