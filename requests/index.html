@@ -61,7 +61,7 @@ h1{font-size:clamp(2rem,6vw,2.75rem);margin:0 0 10px}p{line-height:1.55}.muted{c
 <h3 class="queue-heading">now playing</h3>
 <div class="queue-item">
 <img class="queue-face" src="https://autonick.github.io/diff-faces/levels/none/hard/none/none.png" alt="Hard difficulty">
-<div class="queue-details"><strong id="queue-demo-title">123456789</strong><small>by example viewer</small><small>Hard · now playing</small></div>
+<div class="queue-details"><strong id="queue-demo-title">Example Level</strong><small id="queue-demo-id">(123456789)</small><small>by example viewer</small><small>Hard · now playing</small></div>
 <span class="queue-position">#1</span>
 </div>
 <hr class="queue-divider">
@@ -69,7 +69,7 @@ h1{font-size:clamp(2rem,6vw,2.75rem);margin:0 0 10px}p{line-height:1.55}.muted{c
 <div class="queue-list">
 <div class="queue-item">
 <img class="queue-face" src="https://autonick.github.io/diff-faces/levels/none/easyDemon/none/none.png" alt="Easy Demon difficulty">
-<div class="queue-details"><strong>98765432</strong><small>by another viewer</small><small>Easy Demon · waiting</small></div>
+<div class="queue-details"><strong>Another Example Level</strong><small>(98765432)</small><small>by another viewer</small><small>Easy Demon · waiting</small></div>
 <span class="queue-position">#2</span>
 </div></div>
 </section>
@@ -106,8 +106,8 @@ h1{font-size:clamp(2rem,6vw,2.75rem);margin:0 0 10px}p{line-height:1.55}.muted{c
 </script><script>
 (function(){
  const field=document.getElementById('level-id'), button=document.getElementById('lookup-button');
- const demoTitle=document.getElementById('queue-demo-title');
- field.addEventListener('input',()=>{const id=field.value.trim();demoTitle.textContent=/^\d{1,12}$/.test(id)?id:'123456789';});
+ const demoId=document.getElementById('queue-demo-id');
+ field.addEventListener('input',()=>{const id=field.value.trim();demoId.textContent='('+(/^\d{1,12}$/.test(id)?id:'123456789')+')';});
  const status=document.getElementById('lookup-status'),preview=document.getElementById('level-preview');
  const fallback=document.getElementById('lookup-fallback'),fallbackLink=document.getElementById('lookup-fallback-link');
  const view=(id,value)=>{document.getElementById(id).textContent=value??'Unknown'};
