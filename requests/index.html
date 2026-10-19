@@ -21,16 +21,12 @@ h1{font-size:clamp(2rem,6vw,2.75rem);margin:0 0 10px}p{line-height:1.55}.muted{c
 <body><main>
 <div class="top"><a class="back" href="/">◀ Home</a><button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to dark mode">☾ Dark</button></div>
 <h1>level requests</h1>
-<p class="muted">Want me to play your Geometry Dash level on stream? This is where requests will go.</p>
 <section class="card" aria-labelledby="form-title">
-<span class="status"><span class="dot" aria-hidden="true"></span> Requests not open yet</span>
 <h2 id="form-title">request a level</h2>
-<p class="notice">The new request system is being set up. Submissions on this page aren't enabled yet, so nothing you enter will be sent.</p>
 <form id="level-form">
 <label for="level-id">Geometry Dash level ID</label>
 <input id="level-id" name="level_id" type="text" inputmode="numeric" pattern="[0-9]+" maxlength="12" placeholder="e.g. 123456789" autocomplete="off" required>
-<p class="hint">Enter the numeric ID of a published level.</p>
-<p class="hint"><a href="https://youtu.be/9guPi4djj00" target="_blank" rel="noopener noreferrer">Watch the video ↗</a></p>
+<p class="hint"><a href="https://youtu.be/9guPi4djj00" target="_blank" rel="noopener noreferrer">Where to find your ID ↗</a></p>
 <button id="lookup-button" type="button">Look up level</button>
 <p id="lookup-status" role="status" aria-live="polite" class="hint">Enter a level ID to see its details.</p>
 <section id="level-preview" class="level-preview" hidden aria-label="Level details"><h3 id="preview-name"></h3><p id="preview-creator"></p><dl><div><dt>Difficulty</dt><dd id="preview-difficulty"></dd></div><div><dt>Length</dt><dd id="preview-length"></dd></div><div><dt>Stars</dt><dd id="preview-stars"></dd></div><div><dt>Downloads</dt><dd id="preview-downloads"></dd></div><div><dt>Likes</dt><dd id="preview-likes"></dd></div></dl><a id="preview-link" target="_blank" rel="noopener noreferrer">Open level in GDBrowser ↗</a></section>
@@ -93,7 +89,7 @@ h1{font-size:clamp(2rem,6vw,2.75rem);margin:0 0 10px}p{line-height:1.55}.muted{c
      view('preview-downloads',typeof level.downloads==='number'?level.downloads.toLocaleString():level.downloads||'Unknown');
      view('preview-likes',typeof level.likes==='number'?level.likes.toLocaleString():level.likes??'Unknown');
      document.getElementById('preview-link').href='https://gdbrowser.com/'+encodeURIComponent(id);
-     preview.hidden=false;status.textContent='Level found. Request submissions are not open yet.';
+     preview.hidden=false;status.textContent='Level found.';
    }catch(err){
      if(err.name==='AbortError'){if(id===field.value.trim())status.textContent='Lookup timed out. Try again.';}
      else if(id===field.value.trim())status.textContent=err.message==='Level not found.'?'Level not found. Double-check the ID.':'Could not fetch level details right now. Please try again.';
