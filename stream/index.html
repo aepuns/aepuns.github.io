@@ -52,10 +52,8 @@ body,html{background:var(--page)}
 <button id="submit" type="submit">submit</button>
 </form>
 <p id="status" role="status" aria-live="polite"></p>
-<button type="button" id="leaderboardOpen" aria-haspopup="dialog">🏆 View leaderboard</button></section><dialog id="settingsDialog" aria-labelledby="settingsTitle"><div class="settings-head"><h2 id="settingsTitle">Settings</h2><button id="settingsClose" type="button">✕ Close</button></div><section class="settings-group"><h3>Appearance</h3><p>Display mode</p><div id="modeChoices" class="settings-options"></div><p>Accent color</p><div id="colorChoices" class="settings-options"></div></section><section class="settings-group"><h3>Account</h3><div id="account">checking sign-in…</div>
-
-<section id="account-panel" aria-label="My account">
-<h2>my account</h2>
+<button type="button" id="leaderboardOpen" aria-haspopup="dialog">🏆 View leaderboard</button></section><dialog id="settingsDialog" aria-labelledby="settingsTitle"><div class="settings-head"><h2 id="settingsTitle">Settings</h2><button id="settingsClose" type="button">✕ Close</button></div><section class="settings-group"><h3>Appearance</h3><p>Display mode</p><div id="modeChoices" class="settings-options"></div><p>Accent color</p><div id="colorChoices" class="settings-options"></div></section><section class="settings-group"><h3>Account</h3><div id="account" role="status" aria-live="polite" hidden></div>
+<section id="account-panel" aria-label="Account settings">
 <div id="signed-out" hidden>
 <p class="note">Sign in with Google to redeem words and save points.</p>
 <div id="google-button"></div>
@@ -251,7 +249,7 @@ async function checkAccount() {
         accountMessage.textContent = 'welcome! choose a username for the leaderboard.';
       }
     } else {
-      account.textContent = 'sign in with Google to redeem words';
+      account.textContent = '';
       renderGoogleButton();
     }
     
